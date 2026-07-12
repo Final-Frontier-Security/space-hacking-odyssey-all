@@ -71,8 +71,13 @@ done
 
 # Pin to GNOME dock/favorites
 echo "Pinning apps to dock..."
+
+# Copy 42 and Holodeck desktop files to applications dir for dock access
+cp "$DESKTOP_DIR/42.desktop" "$APP_DIR/nos3-42.desktop" 2>/dev/null || true
+cp "$DESKTOP_DIR/holodeck.desktop" "$APP_DIR/nos3-holodeck.desktop" 2>/dev/null || true
+
 gsettings set org.gnome.shell favorite-apps \
-    "['nos3-hack_groundstation.desktop', 'nos3-unhack_groundstation.desktop', 'nos3-restart-satellite.desktop', 'nos3-stop_42.desktop']" 2>/dev/null || true
+    "['nos3-42.desktop', 'nos3-holodeck.desktop', 'nos3-hack_groundstation.desktop', 'nos3-unhack_groundstation.desktop', 'nos3-restart-satellite.desktop', 'nos3-stop_42.desktop']" 2>/dev/null || true
 
 # Set desktop wallpaper
 WALLPAPER="$BASE_DIR/opstation/assets/background.png"
