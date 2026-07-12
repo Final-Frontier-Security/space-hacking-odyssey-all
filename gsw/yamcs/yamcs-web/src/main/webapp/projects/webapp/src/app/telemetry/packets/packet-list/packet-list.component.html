@@ -1,0 +1,210 @@
+<ya-instance-page>
+  <ya-instance-toolbar label="Packets">
+    <ya-page-button (clicked)="jumpToNow()" icon="refresh">Jump to now</ya-page-button>
+  </ya-instance-toolbar>
+
+  <ya-detail-pane>
+    @if (detailPacket$ | async; as detailPacket) {
+      <ya-detail-toolbar>Packet detail</ya-detail-toolbar>
+      <ya-attr-list style="padding: 0 16px 16px 16px">
+        <ya-attr label="Packet name">
+          {{ detailPacket.id.name }}
+        </ya-attr>
+
+        <ya-attr label="Generation time">
+          {{ detailPacket.generationTime | datetime }}
+        </ya-attr>
+
+        <ya-attr label="Earth reception time">
+          {{ (detailPacket.earthReceptionTime | datetime) || "-" }}
+          @if (detailPacket.earthReceptionTime) {
+            ({{ detailPacket.earthReceptionTime | deltaWith: detailPacket.generationTime }})
+          }
+        </ya-attr>
+
+        <ya-attr label="Reception time">
+          {{ detailPacket.receptionTime | datetime }}
+          ({{ detailPacket.receptionTime | deltaWith: detailPacket.generationTime }})
+        </ya-attr>
+
+        <ya-attr label="Link">
+          {{ detailPacket.link || "-" }}
+        </ya-attr>
+
+        <ya-attr label="Size">
+          {{ detailPacket.size | formatBytes }}
+        </ya-attr>
+
+        <ya-attr>
+          <ng-template ya-attr-label>
+            Binary
+            <ya-more icon="more_horiz">
+              <button mat-menu-item (click)="copyHex(detailPacket)">Copy hex</button>
+              <button mat-menu-item (click)="copyBinary(detailPacket)">Copy binary</button>
+              <mat-divider />
+              <ya-download-menu-item [link]="detailPacket | packetDownloadLink">
+                Download
+              </ya-download-menu-item>
+            </ya-more>
+          </ng-template>
+          <app-hex #hexdump [base64String]="detailPacket.packet" />
+        </ya-attr>
+      </ya-attr-list>
+    } @else {
+      <ya-detail-toolbar>Select a packet</ya-detail-toolbar>
+    }
+  </ya-detail-pane>
+
+  <div class="table-wrapper">
+    <ya-panel>
+      <app-packets-page-tabs>
+        <ya-button
+          appearance="text"
+          icon="clear"
+          (click)="clearQuery()"
+          [disabled]="!isClearQueryEnabled()">
+          Clear query
+        </ya-button>
+        <ya-button appearance="text" icon="save" (click)="openSaveQueryDialog()">
+          Save query
+        </ya-button>
+      </app-packets-page-tabs>
+
+      <ya-filter-bar [formGroup]="filterForm" class="query" style="margin-top: 16px">
+        <ya-select icon="access_time" formControlName="interval">
+          <ya-option id="PT1H" label="Last hour" />
+          <ya-option id="PT6H" label="Last 6 hours" />
+          <ya-option id="P1D" label="Last 24 hours" />
+          <ya-option id="NO_LIMIT" label="No limit" />
+          <ya-option id="CUSTOM" label="Custom" group="true" />
+        </ya-select>
+        @if (filterForm.value["interval"] === "CUSTOM") {
+          <ya-date-time-input formControlName="customStart" />
+          <ya-date-time-input formControlName="customStop" />
+          <ya-button (click)="applyCustomDates()" [disabled]="filterForm.invalid">Apply</ya-button>
+        }
+        <ya-search-filter2
+          #searchFilter
+          formControlName="filter"
+          placeholder="Search packets"
+          style="flex: 1 1 auto"
+          [completions]="completions"
+          (typedValue)="parseQuery($event)" />
+        <ya-select [options]="nameOptions$ | async" formControlName="name" />
+        <ya-select [options]="linkOptions$ | async" formControlName="link" />
+      </ya-filter-bar>
+
+      <ya-table-window [duration]="appliedInterval" [start]="validStart" [stop]="validStop">
+        @if (dataSource.loading$ | async) {
+          <ya-dots />
+        }
+        <mat-menu #exportMenu="matMenu" class="ya-menu">
+          <ya-download-menu-item [link]="downloadURL$ | async">Raw dump</ya-download-menu-item>
+        </mat-menu>
+        <ya-button
+          [matMenuTriggerFor]="exportMenu"
+          [disabled]="!(dataSource.packets$ | async)?.length"
+          icon="download"
+          appearance="text"
+          dropdown="true">
+          Export
+        </ya-button>
+        <ya-column-chooser
+          #columnChooser
+          [columns]="columns"
+          preferenceKey="tmPackets"
+          appearance="text"
+          icon="view_columns" />
+      </ya-table-window>
+
+      @if (searchFilter.dirty()) {
+        <ya-table-top>
+          The search filter has changed.
+          @if (!(searchFilter.errorState$ | async)) {
+            &nbsp;
+            <a href class="ya-link" (click)="searchFilter.doSearch(); $event.preventDefault()">
+              Apply filter
+            </a>
+            .
+          }
+        </ya-table-top>
+      }
+      <table mat-table [dataSource]="dataSource" class="ya-data-table expand">
+        <ng-container matColumnDef="packetName">
+          <th mat-header-cell *matHeaderCellDef>Packet name</th>
+          <td mat-cell *matCellDef="let packet">
+            {{ packet.id.name }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="generationTime">
+          <th mat-header-cell *matHeaderCellDef>Generation time</th>
+          <td mat-cell *matCellDef="let packet">
+            {{ packet.generationTime | datetime }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="sequenceNumber">
+          <th mat-header-cell *matHeaderCellDef>Seq</th>
+          <td mat-cell *matCellDef="let packet">
+            {{ packet.sequenceNumber ?? "-" }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="earthReceptionTime">
+          <th mat-header-cell *matHeaderCellDef>Earth reception time</th>
+          <td mat-cell *matCellDef="let packet">
+            {{ (packet.earthReceptionTime | datetime) || "-" }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="receptionTime">
+          <th mat-header-cell *matHeaderCellDef>Reception time</th>
+          <td mat-cell *matCellDef="let packet">
+            {{ packet.receptionTime | datetime }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="link">
+          <th mat-header-cell *matHeaderCellDef>Link</th>
+          <td mat-cell *matCellDef="let packet">
+            {{ packet.link || "-" }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="size">
+          <th mat-header-cell *matHeaderCellDef>Size</th>
+          <td mat-cell *matCellDef="let packet">
+            {{ packet.size | formatBytes }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="expand"></th>
+          <td mat-cell *matCellDef="let packet">
+            <ya-text-action icon="output" (click)="extractPacket(packet)">Extract</ya-text-action>
+            <ya-more>
+              <button mat-menu-item (click)="copyHex(packet)">Copy hex</button>
+              <button mat-menu-item (click)="copyBinary(packet)">Copy binary</button>
+              <mat-divider />
+              <ya-download-menu-item [link]="packet | packetDownloadLink">
+                Download
+              </ya-download-menu-item>
+            </ya-more>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnChooser.displayedColumns$ | async"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: columnChooser.displayedColumns$ | async"
+          (click)="selectPacket(row)"
+          [class.selected]="isSelected(row)"></tr>
+      </table>
+
+      <ya-toolbar appearance="bottom" align="center">
+        <ya-button [disabled]="!dataSource.hasMore()" (click)="loadMoreData()">Load more</ya-button>
+      </ya-toolbar>
+    </ya-panel>
+  </div>
+</ya-instance-page>

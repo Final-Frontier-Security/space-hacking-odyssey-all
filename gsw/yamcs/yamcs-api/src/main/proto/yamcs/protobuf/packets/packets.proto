@@ -1,0 +1,39 @@
+syntax="proto2";
+
+package yamcs.protobuf.packets;
+
+option java_package = "org.yamcs.protobuf";
+option java_outer_classname = "PacketsProto";
+option java_multiple_files = true;
+
+import "google/protobuf/timestamp.proto";
+
+import "yamcs/protobuf/yamcs.proto";
+
+
+message TmPacketData {
+  // Raw packet binary
+  optional bytes packet = 2;
+
+  // Storage discriminator in case of distinct packets
+  // with the same name and generation time
+  optional int32 sequenceNumber = 4;
+
+  // Packet name
+  optional NamedObjectId id = 5;
+
+  // When the packet was generated
+  optional google.protobuf.Timestamp generationTime = 9;
+
+  // When the signal has been received on ground
+  optional google.protobuf.Timestamp earthReceptionTime = 10;
+
+  // When the packet was received by Yamcs
+  optional google.protobuf.Timestamp receptionTime = 8;
+
+  // Name of the Yamcs link where this packet was received from
+  optional string link = 11;
+
+  // Packet size in bytes
+  optional int32 size = 12;
+}

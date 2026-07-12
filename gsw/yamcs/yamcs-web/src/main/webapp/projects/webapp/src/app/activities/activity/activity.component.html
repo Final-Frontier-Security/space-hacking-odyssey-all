@@ -1,0 +1,66 @@
+@if (activity$ | async; as activity) {
+  <ya-instance-page>
+    <ya-instance-toolbar>
+      <ng-template ya-instance-toolbar-label>
+        <ya-page-icon-button
+          routerLink=".."
+          [queryParams]="{ c: yamcs.context }"
+          icon="arrow_back" />
+        Activity details
+      </ng-template>
+
+      @if (activity.type === "MANUAL" && activity.status === "RUNNING" && mayControlActivities()) {
+        <ya-page-button (clicked)="setSuccessful(activity)" icon="thumb_up">
+          Set successful
+        </ya-page-button>
+        <ya-page-button (clicked)="setFailed(activity)" icon="thumb_down">
+          Set failed
+        </ya-page-button>
+      }
+      @if (mayControlActivities()) {
+        <ya-page-button
+          [disabled]="!!activity.stop"
+          (clicked)="cancelActivity(activity)"
+          icon="cancel">
+          Cancel
+        </ya-page-button>
+      }
+    </ya-instance-toolbar>
+
+    <div class="activity-header">
+      <div class="activity-header-left">
+        <span class="title">{{ activity.detail }}</span>
+        <br />
+        <span class="subtitle">ID: {{ activity.id }}</span>
+        <br />
+        <span class="subtitle">Started {{ activity.start | datetime }}</span>
+        <br />
+      </div>
+      <div class="activity-header-right">
+        <app-activity-status [activity]="activity" />
+      </div>
+    </div>
+
+    <ya-page-tabs>
+      <a
+        routerLink="log"
+        routerLinkActive
+        #rla="routerLinkActive"
+        [class.active]="rla.isActive"
+        [queryParams]="{ c: yamcs.context }">
+        Activity log
+      </a>
+      <a
+        routerLink="details"
+        routerLinkActive
+        #rlb="routerLinkActive"
+        [class.active]="rlb.isActive"
+        [queryParams]="{ c: yamcs.context }">
+        Details
+      </a>
+    </ya-page-tabs>
+    <div class="tab-content-wrapper">
+      <router-outlet />
+    </div>
+  </ya-instance-page>
+}

@@ -1,0 +1,31 @@
+<app-appbase-toolbar>
+  <ng-template app-appbase-toolbar-label>
+    <ya-page-icon-button routerLink="/" color="primary" icon="arrow_back" />
+    Create an instance
+  </ng-template>
+</app-appbase-toolbar>
+
+<app-create-instance-wizard-step step="1" />
+
+<div class="form-content">
+  <table mat-table [dataSource]="dataSource" class="ya-data-table" style="width: 100%">
+    <ng-container cdkColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef>Template</th>
+      <td mat-cell *cdkCellDef="let row">
+        <a [routerLink]="row.name">
+          {{ row.name }}
+        </a>
+      </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <td mat-cell *cdkCellDef="let row">
+        {{ row.description || "-" }}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *cdkHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *cdkRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+</div>

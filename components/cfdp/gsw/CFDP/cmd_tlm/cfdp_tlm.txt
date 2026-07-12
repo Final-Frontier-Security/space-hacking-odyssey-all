@@ -1,0 +1,15 @@
+TELEMETRY CFDP DOWNLINK_FILE_PKT BIG_ENDIAN "Downlink File Packet"
+  APPEND_ID_ITEM CCSDS_APID 16 UINT 2140 "Application ID"
+  APPEND_ITEM      SEQUENCE    16   UINT            "Packet Sequence"
+  APPEND_ITEM      PKT_LEN     16   UINT            "Length of the packet"
+  APPEND_ITEM      SECONDS     32   UINT            ""
+        UNITS Seconds sec
+  APPEND_ITEM      SUBSECS     16   UINT            ""
+        UNITS Milliseconds ms
+  # some bytes not known for what
+  APPEND_ITEM      SPARE2ALIGN 32   UINT            "Spares"
+  APPEND_ITEM PDU_TYPE 8 UINT "PDU Type (01 = Data, 02 = EOF)"
+  APPEND_ITEM DIRECTION 8 UINT "Direction (01 = Downlink, 02 == Uplink)"
+  APPEND_ITEM FILE_DATA 32768 STRING "Chunk of file data"
+  APPEND_ITEM FILENAME_DST 512 STRING "Name of file dest"
+  APPEND_ITEM FILENAME_SRC 512 STRING "Name of file src"

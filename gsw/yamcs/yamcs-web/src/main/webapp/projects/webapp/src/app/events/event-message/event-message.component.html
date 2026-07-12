@@ -1,0 +1,13 @@
+@if (summary === null || summary === undefined) {
+  -
+}
+@if (summary !== null && summary !== undefined) {
+  <ya-highlight [text]="summary" [term]="highlight" />
+}
+@if (detail) {
+  <ya-icon-action icon="more_horiz" (click)="toggleExpanded()" />
+  @if (expanded$ | async) {
+    <br />
+    <ya-highlight [text]="detail" [term]="highlight" />
+  }
+}

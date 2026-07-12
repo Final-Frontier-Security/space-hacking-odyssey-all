@@ -1,0 +1,7 @@
+<span [class.expired]="expired">
+  <ng-content />
+  @if (expired) {
+    &nbsp;
+    <mat-icon [matTooltip]="getExpiredTooltip()" matTooltipClass="multiline">access_time</mat-icon>
+  }
+</span>

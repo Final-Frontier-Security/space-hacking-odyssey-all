@@ -1,0 +1,13 @@
+instances:
+  - instance1
+  - instance2
+
+services:
+  - class: org.yamcs.http.HttpServer
+    args:
+      port: 9190
+      maxPageSize: 10000
+
+dataDir: ${java.io.tmpdir}/yamcs-IntegrationTest-data
+
+secretKey: testtest

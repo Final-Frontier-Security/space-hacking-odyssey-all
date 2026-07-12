@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=42 Satellite Viewer
+Comment=Connect to satellite simulation visualization
+Exec=__BASE_DIR__/scripts/fsw/run_42_client.sh
+Icon=__BASE_DIR__/opstation/assets/42.png
+Terminal=false
+Categories=Development;Education;

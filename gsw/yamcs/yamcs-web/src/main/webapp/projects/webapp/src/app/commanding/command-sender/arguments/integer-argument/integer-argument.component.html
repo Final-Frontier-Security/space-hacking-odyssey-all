@@ -1,0 +1,51 @@
+<ya-field [label]="label" [class.error]="err.invalid$ | async">
+  @if (type.rangeMin !== undefined || type.rangeMax !== undefined) {
+    <ya-meta>
+      <ya-interval [left]="type.rangeMin" [right]="type.rangeMax" />
+    </ya-meta>
+  }
+
+  @if (type.unitSet) {
+    <ya-meta>{{ type.unitSet | units }}</ya-meta>
+  }
+
+  @if (type.signed === false) {
+    <ya-meta>unsigned</ya-meta>
+  }
+
+  <ya-meta>{{ type.engType }}</ya-meta>
+
+  @if (type.signed === false) {
+    <ya-meta
+      action="true"
+      matTooltip="Input options"
+      [matMenuTriggerFor]="argMenu"
+      (click)="$event.stopPropagation()">
+      &#x2630;
+    </ya-meta>
+  }
+  <mat-menu #argMenu="matMenu" class="ya-menu">
+    <button mat-menu-item (click)="hexToggle$.next(true)">
+      <mat-icon [style.visibility]="(hexToggle$ | async) ? 'visible' : 'hidden'">check</mat-icon>
+      Hex input
+    </button>
+    <button mat-menu-item (click)="hexToggle$.next(false)">
+      <mat-icon [style.visibility]="(hexToggle$ | async) ? 'hidden' : 'visible'">check</mat-icon>
+      Decimal input
+    </button>
+  </mat-menu>
+
+  @if (description) {
+    <ya-help>
+      {{ description }}
+    </ya-help>
+  }
+
+  <ya-errors #err [controlName]="controlName" />
+
+  @if (hexToggle$ | async) {
+    <ya-hex-integer-input [formControl]="formControl" />
+  } @else {
+    <input [formControl]="formControl" type="text" autocomplete="off" />
+  }
+</ya-field>

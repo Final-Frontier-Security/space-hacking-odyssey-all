@@ -1,0 +1,21 @@
+<ya-page-tabs>
+  <a
+    routerLink="/links"
+    routerLinkActive
+    [routerLinkActiveOptions]="{ exact: true }"
+    #rla="routerLinkActive"
+    [class.active]="rla.isActive"
+    [queryParams]="{ c: yamcs.context }">
+    Links
+  </a>
+  <a
+    routerLink="/links/log"
+    routerLinkActive
+    #rlb="routerLinkActive"
+    [class.active]="rlb.isActive"
+    [queryParams]="{ c: yamcs.context }">
+    Action log
+  </a>
+
+  <ng-container actions><ng-content /></ng-container>
+</ya-page-tabs>

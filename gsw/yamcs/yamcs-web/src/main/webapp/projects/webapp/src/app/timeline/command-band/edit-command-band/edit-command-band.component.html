@@ -1,0 +1,11 @@
+@if (formConfigured$ | async) {
+  <form [formGroup]="form">
+    <ya-field label="Label" hint="(required)">
+      <input type="text" formControlName="name" />
+    </ya-field>
+
+    <ya-field label="Description" hint="(optional)">
+      <textarea formControlName="description" rows="3"></textarea>
+    </ya-field>
+  </form>
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://yamcs.org/schema/stack.schema.json",
+  "steps": [
+    {
+      "type": "command",
+      "name": "/YSS/SIMULATOR/SWITCH_VOLTAGE_ON",
+      "arguments": [
+        {
+          "name": "voltage_num",
+          "value": 1
+        }
+      ],
+      "comment": "Switch on battery 1 voltage"
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/YSS/SIMULATOR/BatteryVoltage1"
+        },
+        {
+          "parameter": "/YSS/SIMULATOR/BatteryVoltage2"
+        },
+        {
+          "parameter": "/YSS/SIMULATOR/BatteryVoltage3"
+        }
+      ],
+      "comment": "Check the effect on observed telemetry"
+    },
+    {
+      "type": "command",
+      "name": "/YSS/SIMULATOR/SWITCH_VOLTAGE_OFF",
+      "arguments": [
+        {
+          "name": "voltage_num",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "type": "check",
+      "parameters": [
+        {
+          "parameter": "/YSS/SIMULATOR/BatteryVoltage1"
+        }
+      ]
+    }
+  ]
+}

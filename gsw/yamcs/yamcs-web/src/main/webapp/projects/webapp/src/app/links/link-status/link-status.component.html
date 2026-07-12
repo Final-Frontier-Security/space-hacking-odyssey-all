@@ -1,0 +1,26 @@
+@switch (link.status) {
+  @case ("OK") {
+    <ya-led
+      [matTooltip]="link.status"
+      [color]="okColor$ | async"
+      [fade]="parentLink && parentLink.status !== 'OK'" />
+  }
+  @case ("UNAVAIL") {
+    <ya-led
+      [matTooltip]="link.status"
+      color="red"
+      [fade]="parentLink && parentLink.status !== 'OK'" />
+  }
+  @case ("FAILED") {
+    <ya-led
+      [matTooltip]="link.status"
+      color="red"
+      [fade]="parentLink && parentLink.status !== 'OK'" />
+  }
+  @case ("DISABLED") {
+    <ya-led
+      [matTooltip]="link.status"
+      color="#aaa"
+      [fade]="parentLink && parentLink.status !== 'OK'" />
+  }
+}

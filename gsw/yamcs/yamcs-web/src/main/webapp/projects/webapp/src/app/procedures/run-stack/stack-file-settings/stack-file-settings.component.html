@@ -1,0 +1,63 @@
+<ya-instance-page>
+  <ya-instance-toolbar>
+    <ng-template ya-instance-toolbar-label>
+      <ya-page-icon-button
+        [routerLink]="folderLink()"
+        [queryParams]="{ c: yamcs.context }"
+        icon="arrow_back" />
+      {{ objectName() | basename }}
+    </ng-template>
+
+    <ya-page-button
+      matTooltip="Save stack"
+      (clicked)="stackFileService.saveStack()"
+      [disabled]="!(stackFileService.dirty$ | async)"
+      icon="save">
+      Save
+    </ya-page-button>
+  </ya-instance-toolbar>
+
+  <div class="main-pane">
+    <app-stack-file-page-tabs [objectName]="objectName()" />
+
+    <div class="tab-content">
+      <form [formGroup]="stackOptionsForm" class="ya-form">
+        <h3>Commanding</h3>
+        <ya-field>
+          <ng-template ya-field-label>
+            Advance when
+            <app-advance-ack-help [extra]="extraAcknowledgments" />
+          </ng-template>
+
+          <div style="display: flex; align-items: flex-start">
+            <ya-select
+              #ackSelect
+              [options]="ackOptions"
+              icon="check_circle_outline"
+              formControlName="advancementAckDropDown" />
+            @if (stackOptionsForm.get("advancementAckDropDown")?.value === "custom") {
+              <input
+                type="text"
+                formControlName="advancementAckCustom"
+                style="width: 200px; margin-left: -1px" />
+            }
+          </div>
+        </ya-field>
+
+        <ya-field label="Wait (ms)">
+          <ya-help dialogTitle="Wait time">
+            <p>Wait time before advancing to the next command in the stack.</p>
+            <p>This triggers after successful acknowledgment.</p>
+          </ya-help>
+          <input
+            type="number"
+            formControlName="advancementWait"
+            placeholder="0"
+            step="1000"
+            min="0"
+            style="width: 120px" />
+        </ya-field>
+      </form>
+    </div>
+  </div>
+</ya-instance-page>

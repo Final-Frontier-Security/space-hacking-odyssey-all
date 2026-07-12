@@ -1,0 +1,9 @@
+services:
+  - class: org.yamcs.http.HttpServer
+
+instances: []
+
+secretKey: changeme
+
+yamcs-web:
+  tag: "Example: templates"

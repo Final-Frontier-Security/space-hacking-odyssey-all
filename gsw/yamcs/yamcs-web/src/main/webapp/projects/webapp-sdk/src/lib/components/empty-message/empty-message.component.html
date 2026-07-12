@@ -1,0 +1,12 @@
+<div style="width: 100%; text-align: center">
+  <div class="frame" [style.marginTop]="marginTop">
+    @if (headerTitle) {
+      <div class="header">
+        {{ headerTitle }}
+      </div>
+    }
+    <div class="body">
+      <ng-content />
+    </div>
+  </div>
+</div>

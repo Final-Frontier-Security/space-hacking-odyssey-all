@@ -1,0 +1,13 @@
+.table-wrapper {
+  position: relative;
+  overflow: auto;
+  height: 100%;
+}
+
+mat-row {
+  cursor: pointer;
+}
+
+mat-row:hover {
+  background: #fafafa;
+}

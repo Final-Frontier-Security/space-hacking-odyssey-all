@@ -1,0 +1,43 @@
+.search-input {
+  position: relative;
+  display: inline-block;
+}
+
+.search-input input {
+  width: 100%;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.filter {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.filter .material-symbols {
+  color: darkgrey;
+  padding: 4px;
+  font-size: 16px !important;
+  height: 16px !important;
+  width: 16px !important;
+}
+
+.clear {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.clear .material-symbols {
+  cursor: pointer;
+  color: darkgrey;
+  padding: 4px;
+  font-size: 16px !important;
+  height: 16px !important;
+  width: 16px !important;
+}
+
+.clear:hover .material-symbols {
+  color: black;
+}

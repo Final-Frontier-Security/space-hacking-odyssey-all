@@ -1,0 +1,27 @@
+<ya-field [label]="label" [class.error]="err.invalid$ | async">
+  @if (type.rangeMin !== undefined || type.rangeMax !== undefined) {
+    <ya-meta>
+      <ya-interval [left]="type.rangeMin" [right]="type.rangeMax" />
+    </ya-meta>
+  }
+
+  @if (type.unitSet) {
+    <ya-meta>{{ type.unitSet | units }}</ya-meta>
+  }
+
+  @if (type.signed === false) {
+    <ya-meta>unsigned</ya-meta>
+  }
+
+  <ya-meta>{{ type.engType }}</ya-meta>
+
+  @if (description) {
+    <ya-help>
+      {{ description }}
+    </ya-help>
+  }
+
+  <ya-errors #err [controlName]="controlName" />
+
+  <input [formControl]="formControl" type="text" autocomplete="off" />
+</ya-field>

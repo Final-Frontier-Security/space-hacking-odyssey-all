@@ -1,0 +1,39 @@
+.message-bar {
+  background-color: var(--y-error-color) !important;
+  color: #fff !important;
+  overflow: hidden;
+  position: relative;
+  /* CDK overlay is at 1000, we want to be above it */
+  z-index: 2000;
+}
+
+.message-bar.warning {
+  background-color: var(--y-warning-color) !important;
+}
+
+.mat-toolbar-row {
+  height: 48px;
+}
+
+.mat-toolbar-multiple-rows {
+  min-height: 48px;
+}
+
+.actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: var(--y-error-color);
+  height: 48px;
+  line-height: 48px;
+}
+
+.actions button {
+  margin-top: 4px;
+  color: #fff;
+  margin-right: 11px;
+}
+
+.message-bar.warning .actions {
+  background-color: var(--y-warning-color) !important;
+}

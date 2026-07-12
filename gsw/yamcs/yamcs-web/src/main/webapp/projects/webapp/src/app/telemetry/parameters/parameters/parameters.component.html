@@ -1,0 +1,198 @@
+<ya-instance-page>
+  <ya-instance-toolbar label="Parameters" />
+  <span #top></span>
+
+  <ya-panel>
+    @if (breadcrumb$ | async; as breadcrumb) {
+      @if (breadcrumb.length) {
+        <ya-filter-bar>
+          <ya-breadcrumb-trail>
+            <ya-breadcrumb
+              link="/telemetry/parameters"
+              [queryParams]="{ c: yamcs.context }"
+              icon="account_tree" />
+            @for (item of breadcrumb; track item) {
+              <ya-breadcrumb
+                [link]="item.route"
+                [queryParams]="item.queryParams"
+                [label]="item.name" />
+            }
+          </ya-breadcrumb-trail>
+        </ya-filter-bar>
+      }
+    }
+    <ya-filter-bar [formGroup]="filterForm">
+      <ya-search-filter
+        [formControl]="filterForm.controls['filter']"
+        placeholder="Search by name"
+        icon="search"
+        (onArrowDown)="selectNext()"
+        (onArrowUp)="selectPrevious()"
+        (onEnter)="applySelection()" />
+      <ya-select [options]="typeOptions" formControlName="type" />
+      <ya-select [options]="sourceOptions" formControlName="source" />
+      <ya-column-chooser #columnChooser [columns]="columns" preferenceKey="tmParameters" />
+
+      @if (dataSource.loading$ | async) {
+        <ya-dots />
+      }
+    </ya-filter-bar>
+
+    <table mat-table class="ya-data-table expand" [dataSource]="dataSource">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let item" class="primary-td">
+          @if (item.system) {
+            <mat-icon class="icon12" style="vertical-align: middle">folder</mat-icon>
+            <a
+              routerLink="/telemetry/parameters"
+              [queryParams]="{ c: yamcs.context, system: item.name }">
+              {{ item.name | filename }}/
+            </a>
+          }
+          @if (!item.system) {
+            <mat-icon class="icon12" style="vertical-align: middle">toll</mat-icon>
+            <a
+              [routerLink]="'/telemetry/parameters' + item.name"
+              [queryParams]="{ c: yamcs.context }">
+              @if (!(system$ | async)) {
+                <ya-highlight [text]="item.name" [term]="filterForm.value.filter" />
+              }
+              @if (system$ | async; as system) {
+                <ya-highlight
+                  [text]="item.name | slice: system.length + 1"
+                  [term]="filterForm.value.filter" />
+              }
+            </a>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="rawValue">
+        <th mat-header-cell *matHeaderCellDef class="wrap200">Raw value</th>
+        <td mat-cell *cdkCellDef="let item">
+          {{ (item.pval?.rawValue | value: { maxBytes: dataSource.binaryPreview }) || "-" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="engValue">
+        <th mat-header-cell *matHeaderCellDef class="wrap200">Value</th>
+        <td
+          mat-cell
+          *matCellDef="let item"
+          [class.alert]="
+            item.pval?.monitoringResult && item.pval?.monitoringResult !== 'IN_LIMITS'
+          ">
+          @if (item.pval) {
+            <ya-expirable [pval]="item.pval">
+              {{ (item.pval?.engValue | value: { maxBytes: dataSource.binaryPreview }) || "-" }}
+              @if (item.parameter?.type?.unitSet) {
+                <span>
+                  {{ (item.parameter | parameterTypeForPath)?.unitSet | units }}
+                </span>
+              }
+              @if (item.pval?.rangeCondition === "LOW") {
+                <span>&#8595;</span>
+              }
+              @if (item.pval?.rangeCondition === "HIGH") {
+                <span>&#8593;</span>
+              }
+            </ya-expirable>
+          }
+          @if (!item.pval) {
+            <span>-</span>
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="gentime">
+        <th mat-header-cell *matHeaderCellDef>Generation time</th>
+        <td mat-cell *matCellDef="let item">
+          {{ (item.pval?.generationTime | datetime) || "-" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="rectime">
+        <th mat-header-cell *matHeaderCellDef>Reception time</th>
+        <td mat-cell *matCellDef="let item">
+          {{ (item.pval?.acquisitionTime | datetime) || "-" }}
+          @if (item.pval?.generationTime && item.pval?.acquisitionTime) {
+            ({{ item.pval.acquisitionTime | deltaWith: item.pval.generationTime }})
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let item">
+          @if ((item.parameter | parameterTypeForPath)?.engType; as engType) {
+            <span class="mono">
+              {{ engType }}
+            </span>
+          } @else {
+            -
+          }
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="dataSource">
+        <th mat-header-cell *matHeaderCellDef>Data source</th>
+        <td mat-cell *matCellDef="let item">
+          {{ (item.parameter?.dataSource | titlecase) || "-" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="shortDescription">
+        <th mat-header-cell *matHeaderCellDef class="wrap200">Description</th>
+        <td mat-cell *matCellDef="let item">
+          @if (item.system) {
+            {{ item.system.shortDescription || "-" }}
+          }
+          @if (item.parameter) {
+            {{ item.parameter.shortDescription || "-" }}
+          }
+        </td>
+      </ng-container>
+
+      @for (aliasColumn of aliasColumns$ | async; track aliasColumn) {
+        <ng-container [matColumnDef]="aliasColumn.id">
+          <th mat-header-cell *matHeaderCellDef>
+            {{ aliasColumn.label }}
+          </th>
+          <td mat-cell *matCellDef="let item">
+            @if (item.parameter | alias: aliasColumn.id; as name) {
+              <ya-highlight [text]="name" [term]="filterForm.value.filter" />
+            } @else {
+              -
+            }
+          </td>
+        </ng-container>
+      }
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="expand"></th>
+        <td mat-cell *matCellDef="let item"></td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnChooser.displayedColumns$ | async"></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: columnChooser.displayedColumns$ | async"
+        [class.selected]="selection.isSelected(row)"></tr>
+    </table>
+
+    <mat-paginator
+      [pageSize]="pageSize"
+      [hidePageSize]="true"
+      [showFirstLastButtons]="true"
+      [length]="dataSource.totalSize$ | async" />
+  </ya-panel>
+
+  <ng-template #empty>
+    <ya-panel>
+      The Mission Database for
+      <i>{{ yamcs.instance }}</i>
+      does not define any parameters.
+    </ya-panel>
+  </ng-template>
+</ya-instance-page>

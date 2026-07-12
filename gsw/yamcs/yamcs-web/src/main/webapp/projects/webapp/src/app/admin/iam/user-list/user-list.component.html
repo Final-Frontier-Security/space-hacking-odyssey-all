@@ -1,0 +1,49 @@
+<app-admin-page>
+  <app-admin-toolbar label="Users">
+    <ya-page-button routerLink="create" icon="add_box">Create user</ya-page-button>
+  </app-admin-toolbar>
+
+  <ya-panel>
+    <ya-filter-bar>
+      <ya-search-filter [formControl]="filterControl" placeholder="Filter users" />
+    </ya-filter-bar>
+
+    <mat-tab-group animationDuration="0ms" class="secondary" [mat-stretch-tabs]="false">
+      <mat-tab>
+        <ng-template mat-tab-label>Active ({{ activeUserCount$ | async }})</ng-template>
+        <br />
+        <app-users-table
+          [users]="activeUsers$ | async"
+          [filter]="filterValue$ | async"
+          (deleteUser)="deleteUser($event)" />
+      </mat-tab>
+
+      <mat-tab [disabled]="true">
+        <ng-template mat-tab-label>Superusers ({{ superUserCount$ | async }})</ng-template>
+        <br />
+        <app-users-table
+          [users]="superUsers$ | async"
+          [filter]="filterValue$ | async"
+          (deleteUser)="deleteUser($event)" />
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>Internal ({{ internalUserCount$ | async }})</ng-template>
+        <br />
+        <app-users-table
+          [users]="internalUsers$ | async"
+          [filter]="filterValue$ | async"
+          (deleteUser)="deleteUser($event)" />
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>Blocked ({{ blockedUserCount$ | async }})</ng-template>
+        <br />
+        <app-users-table
+          [users]="blockedUsers$ | async"
+          [filter]="filterValue$ | async"
+          (deleteUser)="deleteUser($event)" />
+      </mat-tab>
+    </mat-tab-group>
+  </ya-panel>
+</app-admin-page>

@@ -1,0 +1,91 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "webapp": {
+      "root": "projects/webapp",
+      "sourceRoot": "projects/webapp/src",
+      "projectType": "application",
+      "schematics": {},
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "outputPath": {
+              "base": "dist/webapp",
+              "browser": ""
+            },
+            "index": "projects/webapp/src/index.template.html",
+            "browser": "projects/webapp/src/main.ts",
+            "tsConfig": "projects/webapp/tsconfig.app.json",
+            "preserveSymlinks": true,
+            "outputHashing": "bundles",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/webapp/src/assets/",
+                "output": "/"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@yamcs/opi/dist/images/",
+                "output": "/media/"
+              },
+              {
+                "glob": "**/*",
+                "input": "node_modules/@yamcs/opi/dist/fonts/",
+                "output": "/media/"
+              },
+              "projects/webapp/src/manifest.webmanifest"
+            ],
+            "styles": ["projects/webapp-sdk/src/styles/index.scss"],
+            "serviceWorker": "projects/webapp/ngsw-config.json"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "sourceMap": false,
+              "namedChunks": false
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": false
+            }
+          },
+          "defaultConfiguration": "production"
+        }
+      }
+    },
+    "webapp-sdk": {
+      "projectType": "library",
+      "root": "projects/webapp-sdk",
+      "sourceRoot": "projects/webapp-sdk/src",
+      "prefix": "ya",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:ng-packagr",
+          "options": {
+            "project": "projects/webapp-sdk/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/webapp-sdk/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/webapp-sdk/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}

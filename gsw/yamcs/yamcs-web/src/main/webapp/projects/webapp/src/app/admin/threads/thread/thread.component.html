@@ -1,0 +1,46 @@
+@if (thread$ | async; as thread) {
+  <app-admin-page>
+    <app-admin-toolbar>
+      <ng-template app-admin-toolbar-label>
+        <ya-page-icon-button routerLink=".." icon="arrow_back" />
+        {{ thread.name }}
+      </ng-template>
+    </app-admin-toolbar>
+
+    <ya-panel class="ya-link">
+      <dl class="dl-horizontal no-lead">
+        <dt>ID</dt>
+        <dd>{{ thread.id }}</dd>
+        <dt>Name</dt>
+        <dd>{{ thread.name }}</dd>
+        <dt>Native</dt>
+        <dd>
+          {{ thread.native ? "Yes" : "No" }}
+        </dd>
+        <dt>Suspended</dt>
+        <dd>
+          {{ thread.suspended ? "Yes" : "No" }}
+        </dd>
+        <dt>Group</dt>
+        <dd>{{ thread.group?.name || "-" }}</dd>
+      </dl>
+      <div class="section-divider">
+        <mat-divider />
+      </div>
+      <h4>Stack trace</h4>
+      @if (thread.trace) {
+        <table yaDataTable>
+          @for (element of thread.trace; track element) {
+            <tr>
+              <td>
+                <app-trace-element [element]="element" />
+              </td>
+            </tr>
+          }
+        </table>
+      } @else {
+        Information not available
+      }
+    </ya-panel>
+  </app-admin-page>
+}

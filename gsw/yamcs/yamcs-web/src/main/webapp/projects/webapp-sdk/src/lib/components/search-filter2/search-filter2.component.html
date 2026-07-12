@@ -1,0 +1,44 @@
+<div class="search-input" [style.width]="width()">
+  <div class="query-container-and-error">
+    @if (expanded()) {
+      <ya-filter-textarea
+        #multiline
+        [formControl]="formControl"
+        [errorMark]="(errorState$ | async)?.context"
+        [completions]="completions()" />
+    } @else {
+      <ya-filter-input
+        #oneline
+        [formControl]="formControl"
+        [errorMark]="(errorState$ | async)?.context"
+        (onEnter)="doSearch()"
+        [placeholder]="placeholder()"
+        [completions]="completions()"
+        icon="search" />
+    }
+    @if (errorState$ | async; as errorState) {
+      <div class="query-error">
+        {{ errorState.message }}
+      </div>
+    }
+  </div>
+
+  <ya-button-group>
+    <ya-button class="search" (click)="doSearch()" [disabled]="!!(errorState$ | async)">
+      Search
+    </ya-button>
+    <ya-icon-button [matMenuTriggerFor]="moreMenu" icon="arrow_drop_down" />
+    <mat-menu
+      #moreMenu="matMenu"
+      overlapTrigger="false"
+      class="ya-menu"
+      xPosition="before"
+      yPosition="below">
+      @if (expanded()) {
+        <button mat-menu-item (click)="expanded.set(false)">Multiline: on</button>
+      } @else {
+        <button mat-menu-item (click)="expanded.set(true)">Multiline: off</button>
+      }
+    </mat-menu>
+  </ya-button-group>
+</div>

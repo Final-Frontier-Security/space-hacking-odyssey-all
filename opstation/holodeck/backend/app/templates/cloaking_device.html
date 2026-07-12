@@ -1,0 +1,15 @@
+<html>
+    <body>
+        <h1>Cloaking Device Control</h1>
+        {% if cloak_status == "Deactivated" %}
+            <form action="/cloaking/activate" method="POST">
+                <button type="submit">Activate</button>
+            </form>
+        {% else %}
+            <form action="/cloaking/deactivate" method="POST">
+                <span>Current captured packet count: {{packet_count}}</span><br />
+                <button type="submit">Deactivate</button>
+            </form>
+        {% endif %}
+    </body>
+</html>

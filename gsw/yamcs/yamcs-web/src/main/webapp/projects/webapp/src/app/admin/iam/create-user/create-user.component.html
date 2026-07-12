@@ -1,0 +1,46 @@
+<app-admin-page>
+  <app-admin-toolbar>
+    <ng-template app-admin-toolbar-label>
+      <ya-page-icon-button routerLink=".." icon="arrow_back" />
+      Create user
+    </ng-template>
+  </app-admin-toolbar>
+
+  <div class="form-content ya-form">
+    <form [formGroup]="form" novalidate autocomplete="off">
+      <ya-field label="Username" hint="(required)">
+        <input formControlName="name" type="text" />
+      </ya-field>
+
+      <ya-field label="Display name" hint="(optional)">
+        <input formControlName="displayName" type="text" />
+      </ya-field>
+
+      <ya-field label="Email" hint="(optional)">
+        <input formControlName="email" type="text" />
+      </ya-field>
+
+      <ya-field-divider />
+
+      <ya-field label="Password" hint="(optional)">
+        <span class="hint">
+          User without a password may still be able to login if an external identity provider is
+          configured.
+        </span>
+        <input formControlName="password" type="password" />
+      </ya-field>
+
+      <ya-field label="Password confirmation">
+        <input formControlName="passwordConfirmation" type="password" />
+      </ya-field>
+    </form>
+
+    <p>&nbsp;</p>
+    <ya-toolbar appearance="bottom">
+      <ya-button routerLink="..">Cancel</ya-button>
+      <ya-button appearance="primary" (click)="onConfirm()" [disabled]="!form.valid">
+        CREATE
+      </ya-button>
+    </ya-toolbar>
+  </div>
+</app-admin-page>

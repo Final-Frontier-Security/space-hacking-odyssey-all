@@ -1,0 +1,164 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.yamcs</groupId>
+    <artifactId>yamcs</artifactId>
+    <version>5.12.1-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>distribution</artifactId>
+  <packaging>pom</packaging>
+  <name>Yamcs :: Distribution</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.yamcs</groupId>
+      <artifactId>yamcs-rocksdb</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.yamcs</groupId>
+      <artifactId>packet-viewer</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.yamcs</groupId>
+      <artifactId>yamcs-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.yamcs</groupId>
+      <artifactId>yamcs-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.yamcs</groupId>
+      <artifactId>yamcs-tse</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.yamcs</groupId>
+      <artifactId>yamcs-xtce</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.yamcs</groupId>
+      <artifactId>yamcs-web</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <!-- 
+    Conditional, to save on build time during regular development. To activate
+    outside of a release, use the profile: mvn install -Pbuild-distribution
+   -->
+  <profiles>
+    <profile>
+      <id>build-distribution</id>
+      <activation>
+        <property>
+          <name>release</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <!-- Unpack rocksdbjni fat jar.
+                   This effectively excludes the jar as a
+                   Maven dependency too, so its automatically
+                   gets excluded from maven assemblies. -->
+              <execution>
+                <id>unpack-rocksdbjni</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>unpack</goal>
+                </goals>
+                <configuration>
+                  <artifactItems>
+                    <artifactItem>
+                      <groupId>org.yamcs</groupId>
+                      <artifactId>yamcs-rocksdb</artifactId>
+                      <outputDirectory>target/rocksdbjni-${rocksdbVersion}</outputDirectory>
+                    </artifactItem>
+                  </artifactItems>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <executions>
+              <!--
+                Create a rocksdbjni jar that excludes
+                classpath native libraries.
+               -->
+              <execution>
+                <id>pack-rocksdbjni-java</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>rocksdbjni-java.descriptor.xml</descriptor>
+                  </descriptors>
+                  <finalName>rocksdbjni-${rocksdbVersion}</finalName>
+                  <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+              </execution>
+              <!--
+                Make OS-specific Yamcs distributions, each
+                containing only the applicable rocksdbjni
+                native library.
+
+                The library is deployed to lib (must be added to
+                java.library.path, and is loaded by a static
+                initializer in the RocksDB class using the call
+                System.loadLibrary("rocksdbjni");
+               -->
+              <execution>
+                <id>yamcs-assembly</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>yamcs-linux-aarch64.descriptor.xml</descriptor>
+                    <descriptor>yamcs-linux-x86_64.descriptor.xml</descriptor>
+                    <descriptor>yamcs-osx-aarch64.descriptor.xml</descriptor>
+                    <descriptor>yamcs-osx-x86_64.descriptor.xml</descriptor>
+                    <descriptor>yamcs-win64.descriptor.xml</descriptor>
+                  </descriptors>
+                  <finalName>yamcs-${project.version}</finalName>
+                  <appendAssemblyId>true</appendAssemblyId>
+                </configuration>
+              </execution>
+              <execution>
+                <id>packet-viewer-assembly</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>single</goal>
+                </goals>
+                <configuration>
+                  <descriptors>
+                    <descriptor>packet-viewer.descriptor.xml</descriptor>
+                  </descriptors>
+                  <finalName>packet-viewer-${project.version}</finalName>
+                  <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+              </execution>
+            </executions>
+            <configuration>
+              <tarLongFileMode>posix</tarLongFileMode>
+              <attach>false</attach>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

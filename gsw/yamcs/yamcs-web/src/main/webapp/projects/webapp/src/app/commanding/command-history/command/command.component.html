@@ -1,0 +1,16 @@
+@if (command$ | async; as command) {
+  <ya-instance-page>
+    <ya-instance-toolbar>
+      <ng-template ya-instance-toolbar-label>
+        <ya-page-icon-button
+          routerLink=".."
+          [queryParams]="{ c: yamcs.context }"
+          icon="arrow_back" />
+        Command history / {{ command.id }}
+      </ng-template>
+    </ya-instance-toolbar>
+    <ya-panel>
+      <app-command-detail2 [command]="command" />
+    </ya-panel>
+  </ya-instance-page>
+}

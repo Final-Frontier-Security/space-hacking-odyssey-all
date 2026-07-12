@@ -1,0 +1,32 @@
+<ng-container [formGroup]="formGroup">
+  <ng-container formGroupName="advancement">
+    <ya-field>
+      <ng-template ya-field-label>
+        Advance when
+        <app-advance-ack-help
+          [verifiers]="verifierAcknowledgments"
+          [extra]="extraAcknowledgments" />
+      </ng-template>
+
+      <div style="display: flex; align-items: flex-start">
+        <ya-select
+          #ackSelect
+          [options]="ackOptions"
+          formControlName="acknowledgment"
+          emptyOption="Inherit" />
+        @if (custom) {
+          <input type="text" formControlName="ackCustom" style="width: 200px; margin-left: -1px" />
+        }
+      </div>
+    </ya-field>
+
+    <ya-field label="Wait (ms)">
+      <ya-help dialogTitle="Wait time">
+        <p>Wait time before advancing to the next command in the stack.</p>
+        <p>This triggers after successful acknowledgment.</p>
+      </ya-help>
+
+      <input type="number" formControlName="wait" placeholder="Inherit" step="1000" min="0" />
+    </ya-field>
+  </ng-container>
+</ng-container>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interceptor</title>
+</head>
+<body>
+    <h1>Intercepted Command Packet</h1>
+    {{ target.name }}
+    {{ command.name }}
+    <form method="POST" action="/targets/{{target.id}}/commands/{{command.id}}/execute">
+        {% for intercepted_param, command_param in parameters_and_values %}
+            <label>{{command_param.name}}</label><br />
+            {% if command_param.name.startswith("CCSDS") %}
+                <input name="{{ command_param.name }}" value="{{intercepted_param.value}}" disabled><br />
+            {% else %}
+            <input name="{{ command_param.name }}" value="{{intercepted_param.value}}"><br />
+            {% endif %}
+            <input name="id" value="{{ command_param.id }}" hidden>
+        {% endfor %}
+        <button type="submit">Send</button>
+    </form>
+</body>
+</html>

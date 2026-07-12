@@ -1,0 +1,104 @@
+<ya-instance-page>
+  <ya-instance-toolbar label="Send a command" />
+
+  <app-send-command-wizard-step step="2" />
+
+  <div class="form-content">
+    @if (command(); as command) {
+      <dl class="dl-horizontal no-lead">
+        <dt>Command</dt>
+        <dd>{{ command.qualifiedName | shortName }}</dd>
+        <dt>System</dt>
+        <dd>{{ (command.qualifiedName | spaceSystemName) || "-" }}</dd>
+        @for (alias of command.alias; track alias) {
+          <dt>{{ alias.namespace }}</dt>
+          <dd>{{ alias.name }}</dd>
+        }
+        @if (command.longDescription || command.shortDescription) {
+          @if (command.longDescription) {
+            <dt>Description</dt>
+            <dd>
+              <app-markdown [text]="command.longDescription" />
+            </dd>
+          }
+          @if (!command.longDescription) {
+            <dt>Description</dt>
+            <dd>
+              {{ command.shortDescription || "-" }}
+            </dd>
+          }
+        }
+        <dt>Significance</dt>
+        <dd>
+          @if (command?.effectiveSignificance; as significance) {
+            <app-significance-level [level]="significance.consequenceLevel" />
+            &nbsp;&nbsp;{{ significance.reasonForWarning }}
+          } @else {
+            -
+          }
+        </dd>
+      </dl>
+    }
+
+    @if (!(cleared$ | async)) {
+      <ya-warning-message>You're not cleared to send this command</ya-warning-message>
+    }
+
+    <app-command-form
+      #commandForm
+      [command]="command()"
+      [templateProvider]="templateProvider$ | async">
+      <ng-container head>
+        <ya-stepper-step label="Constraints" [expanded]="true" [visible]="!!command()?.constraint">
+          <app-command-constraints
+            [command]="command()"
+            [relto]="command()?.qualifiedName | spaceSystemName" />
+        </ya-stepper-step>
+      </ng-container>
+    </app-command-form>
+
+    <p>&nbsp;</p>
+    <mat-toolbar>
+      <ya-button (click)="goBack()">Cancel</ya-button>
+      <span style="flex: 1 1 auto"></span>
+      @if (config.twoStageCommanding) {
+        <mat-slide-toggle [formControl]="armControl" color="primary">Arm</mat-slide-toggle>
+        <div style="width: 20px"></div>
+      }
+      <ya-button
+        appearance="primary"
+        icon="send"
+        [disabled]="
+          (config.twoStageCommanding && !armControl.value) ||
+          !(cleared$ | async) ||
+          !commandForm.form.valid
+        "
+        (click)="sendCommand()">
+        Send
+      </ya-button>
+      @if (showSchedule()) {
+        &nbsp;
+        <ya-icon-action
+          [matMenuTriggerFor]="
+            (config.twoStageCommanding && !armControl.value) ||
+            !(cleared$ | async) ||
+            !commandForm.form.valid
+              ? null
+              : sendMenu
+          "
+          icon="arrow_drop_down"
+          [padding]="false"
+          [disabled]="
+            (config.twoStageCommanding && !armControl.value) ||
+            !(cleared$ | async) ||
+            !commandForm.form.valid
+          "
+          style="line-height: 12px" />
+        <mat-menu #sendMenu="matMenu" class="ya-menu" [overlapTrigger]="false">
+          <button mat-menu-item (click)="sendCommand()">Send now</button>
+          <button mat-menu-item (click)="openScheduleCommandDialog()">Send later...</button>
+        </mat-menu>
+      }
+    </mat-toolbar>
+  </div>
+</ya-instance-page>

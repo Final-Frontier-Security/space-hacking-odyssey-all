@@ -1,0 +1,10 @@
+.trail {
+  height: 24px;
+  font:
+    400 12px / 24px Roboto,
+    sans-serif;
+}
+
+.showMargin {
+  margin-bottom: 12px;
+}

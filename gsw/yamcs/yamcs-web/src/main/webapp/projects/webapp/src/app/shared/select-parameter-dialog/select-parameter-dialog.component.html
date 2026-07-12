@@ -1,0 +1,24 @@
+<h2 mat-dialog-title>{{ label }}</h2>
+
+<mat-dialog-content class="ya-form">
+  <ya-field [label]="label">
+    <input type="text" [formControl]="parameter" [matAutocomplete]="auto" />
+    <mat-autocomplete class="ya-autocomplete" #auto>
+      @for (option of filteredOptions | async; track option) {
+        <mat-option [value]="option | memberPath">
+          {{ option | memberPath }}
+        </mat-option>
+      }
+    </mat-autocomplete>
+    @if (hint) {
+      <span class="hint">{{ hint }}</span>
+    }
+  </ya-field>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <ya-button mat-dialog-close>CANCEL</ya-button>
+  <ya-button appearance="primary" (click)="select()" [disabled]="!parameter.valid">
+    {{ okLabel }}
+  </ya-button>
+</mat-dialog-actions>

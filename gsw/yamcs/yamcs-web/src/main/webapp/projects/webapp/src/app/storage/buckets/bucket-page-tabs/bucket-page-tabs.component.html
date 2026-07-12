@@ -1,0 +1,18 @@
+<ya-page-tabs>
+  <a
+    [routerLink]="['/storage/buckets', bucket, 'objects']"
+    routerLinkActive
+    #rla="routerLinkActive"
+    [class.active]="rla.isActive">
+    Objects
+  </a>
+  <a
+    [routerLink]="['/storage/buckets', bucket, 'properties']"
+    routerLinkActive
+    #rlb="routerLinkActive"
+    [class.active]="rlb.isActive">
+    Properties
+  </a>
+
+  <ng-container actions><ng-content /></ng-container>
+</ya-page-tabs>

@@ -1,0 +1,11 @@
+<ya-attr-list>
+  @for (column of streamData.column; track column; let i = $index) {
+    <ya-attr [label]="column.name">
+      @if (column.value.type === "BINARY") {
+        <app-hex [base64String]="streamData.column[i].value.binaryValue" />
+      } @else {
+        {{ (streamData.column[i].value | value) || "-" }}
+      }
+    </ya-attr>
+  }
+</ya-attr-list>

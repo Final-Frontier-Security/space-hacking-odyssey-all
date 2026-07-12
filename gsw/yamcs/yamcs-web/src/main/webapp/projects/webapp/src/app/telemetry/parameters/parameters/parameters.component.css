@@ -1,0 +1,7 @@
+.primary-td .mat-icon {
+  margin-right: 7px;
+}
+
+.alert {
+  color: var(--y-error-color) !important;
+}

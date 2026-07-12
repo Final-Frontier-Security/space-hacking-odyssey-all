@@ -1,0 +1,187 @@
+@if (algorithm$ | async; as algorithm) {
+  @if (status$ | async; as status) {
+    @if (status.traceEnabled) {
+      <div class="extra-bar-container">
+        <div class="extra-bar">
+          <ya-button (click)="stopTrace()">Stop trace</ya-button>
+          &nbsp;
+          <ya-button (click)="refreshData()">Refresh</ya-button>
+          &nbsp;
+          @if (section$ | async; as section) {
+            <span class="separator" style="margin-left: 10px; margin-right: 10px"></span>
+            <ya-text-action
+              icon="directions_run"
+              [active]="section === 'runs'"
+              (click)="switchToSection('runs')">
+              Runs
+            </ya-text-action>
+            &nbsp;&nbsp;
+            <ya-text-action
+              icon="menu_book"
+              [active]="section === 'logs'"
+              (click)="switchToSection('logs')">
+              Logs
+            </ya-text-action>
+          }
+        </div>
+      </div>
+      <ya-panel>
+        @if ((section$ | async) === "runs") {
+          @if (trace$ | async; as trace) {
+            @if (trace.runs?.length) {
+              <table yaDataTable class="expand">
+                <tr>
+                  <th class="status"></th>
+                  <th>Started</th>
+                  <th>Inputs</th>
+                  <th>Outputs</th>
+                  <th>Return value</th>
+                  <th>Error</th>
+                  <th></th>
+                </tr>
+                @for (run of trace.runs; track run; let index = $index) {
+                  <tr>
+                    <td class="status">
+                      @if (run.error) {
+                        <mat-icon class="error">error</mat-icon>
+                      } @else {
+                        <mat-icon class="ok">check_circle</mat-icon>
+                      }
+                    </td>
+                    <td style="width: 200px">{{ run.time | datetime }}</td>
+                    <td style="width: 400px">
+                      @for (input of run.inputs || []; track input; let last = $last) {
+                        <a
+                          [routerLink]="'/telemetry/parameters' + input.id.name"
+                          [queryParams]="{ c: yamcs.context }"
+                          class="secundary">
+                          {{ input.id.name }}
+                        </a>
+                        :
+                        <ya-value [value]="input.engValue" />
+                        @if (!last) {
+                          <br />
+                        }
+                      }
+                      @if (!run.inputs?.length) {
+                        -
+                      }
+                    </td>
+                    <td style="width: 400px">
+                      @for (output of run.outputs || []; track output; let last = $last) {
+                        <a
+                          [routerLink]="'/telemetry/parameters' + output.id.name"
+                          [queryParams]="{ c: yamcs.context }"
+                          class="secundary">
+                          {{ output.id.name }}
+                        </a>
+                        :
+                        <ya-value [value]="output.engValue" />
+                        @if (!last) {
+                          <br />
+                        }
+                      }
+                      @if (!run.outputs?.length) {
+                        -
+                      }
+                    </td>
+                    <td style="width: 200px">{{ run.returnValue | nvl: "-" }}</td>
+                    <td style="width: 200px">{{ run.error || "-" }}</td>
+                    <td></td>
+                  </tr>
+                }
+              </table>
+            } @else {
+              <ya-empty-message>
+                <p>Tracing has started.</p>
+                <p>
+                  This page does
+                  <strong>not</strong>
+                  update automatically.
+                </p>
+                <p>
+                  Hit refresh, or check back at a later time when you think there should be trace
+                  entries.
+                </p>
+                <p>
+                  <ya-button appearance="primary" (click)="refreshData()">Refresh</ya-button>
+                </p>
+              </ya-empty-message>
+            }
+          } @else {
+            <ya-empty-message>
+              <p>Tracing has started.</p>
+              <p>
+                This page does
+                <strong>not</strong>
+                update automatically.
+              </p>
+              <p>
+                Hit refresh, or check back at a later time when you think there should be trace
+                entries.
+              </p>
+              <p>
+                <ya-button appearance="primary" (click)="refreshData()">Refresh</ya-button>
+              </p>
+            </ya-empty-message>
+          }
+        }
+        @if ((section$ | async) === "logs") {
+          @if (trace$ | async; as trace) {
+            @if (trace.logs?.length) {
+              <table class="logs mono" style="width: 100%">
+                @for (log of trace.logs; track log) {
+                  <tr>
+                    <td class="time" style="white-space: nowrap" width="1">
+                      [{{ log.time | datetime }}]
+                    </td>
+                    <td class="msg" style="white-space: pre">{{ log.msg }}</td>
+                  </tr>
+                }
+              </table>
+            } @else {
+              <ya-empty-message>
+                <p>Tracing has started.</p>
+                <p>
+                  This page does
+                  <strong>not</strong>
+                  update automatically.
+                </p>
+                <p>
+                  Hit refresh, or check back at a later time when you think there should be trace
+                  entries.
+                </p>
+                <p>
+                  <ya-button appearance="primary" (click)="refreshData()">Refresh</ya-button>
+                </p>
+              </ya-empty-message>
+            }
+          } @else {
+            <ya-empty-message>
+              <p>Tracing has started.</p>
+              <p>
+                This page does
+                <strong>not</strong>
+                update automatically.
+              </p>
+              <p>
+                Hit refresh, or check back at a later time when you think there should be trace
+                entries.
+              </p>
+              <p>
+                <ya-button appearance="primary" (click)="refreshData()">Refresh</ya-button>
+              </p>
+            </ya-empty-message>
+          }
+        }
+      </ya-panel>
+    } @else {
+      <ya-empty-message headerTitle="Trace">
+        <p>The trace tool captures runs, inputs, outputs and log messages of this algorithm.</p>
+        <p>
+          <ya-button appearance="primary" (click)="startTrace()">Start trace</ya-button>
+        </p>
+      </ya-empty-message>
+    }
+  }
+}

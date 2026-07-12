@@ -1,0 +1,7 @@
+<mat-icon
+  #tooltip="matTooltip"
+  class="title-copy"
+  [matTooltip]="tooltip$ | async"
+  (click)="doCopy()">
+  content_paste
+</mat-icon>

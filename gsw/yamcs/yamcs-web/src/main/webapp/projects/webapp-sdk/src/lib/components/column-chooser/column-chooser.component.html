@@ -1,0 +1,20 @@
+<ya-button
+  [matMenuTriggerFor]="colMenu"
+  [appearance]="appearance()"
+  [icon]="icon()"
+  dropdown="true">
+  Columns
+</ya-button>
+
+<mat-menu #colMenu="matMenu" yPosition="below" class="ya-menu" [overlapTrigger]="false">
+  <ng-template matMenuContent>
+    @for (column of columns; track column) {
+      @if (!column.alwaysVisible) {
+        <button mat-menu-item (click)="toggleColumn(column)">
+          <mat-icon [style.visibility]="isVisible(column) ? 'visible' : 'hidden'">check</mat-icon>
+          {{ column.label }}
+        </button>
+      }
+    }
+  </ng-template>
+</mat-menu>

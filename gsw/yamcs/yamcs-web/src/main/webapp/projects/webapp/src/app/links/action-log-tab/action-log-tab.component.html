@@ -1,0 +1,46 @@
+<ya-instance-page>
+  <ya-instance-toolbar label="Links" />
+
+  <ya-panel>
+    <app-links-page-tabs />
+
+    <ya-filter-bar [formGroup]="filterForm" style="margin-top: 16px">
+      <ya-select [options]="intervalOptions" icon="access_time" formControlName="interval" />
+      @if (filterForm.value["interval"] === "CUSTOM") {
+        <ya-date-time-input formControlName="customStart" />
+        <ya-date-time-input formControlName="customStop" />
+        <ya-button (click)="applyCustomDates()" [disabled]="filterForm.invalid">Apply</ya-button>
+      }
+      @if (filterForm.value["interval"] !== "CUSTOM") {
+        <ya-button (click)="jumpToNow()">Jump to now</ya-button>
+      }
+    </ya-filter-bar>
+
+    <table mat-table [dataSource]="dataSource" class="ya-data-table expand">
+      <ng-container matColumnDef="time">
+        <th mat-header-cell *matHeaderCellDef>Time</th>
+        <td mat-cell *matCellDef="let row">{{ row.time | datetime }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="user">
+        <th mat-header-cell *matHeaderCellDef>User</th>
+        <td mat-cell *matCellDef="let row">{{ row.user || "-" }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="summary">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let row">
+          <ya-action-log-summary [text]="row.summary" />
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="expand"></th>
+        <td mat-cell *matCellDef="let row"></td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </ya-panel>
+</ya-instance-page>

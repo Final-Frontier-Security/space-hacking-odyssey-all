@@ -1,0 +1,10 @@
+@if (sortedLabels$ | async; as labels) {
+  @for (label of labels; track label) {
+    <ya-label>
+      {{ label.key }}
+      @if (label.value) {
+        :&nbsp;{{ label.value }}
+      }
+    </ya-label>
+  }
+}

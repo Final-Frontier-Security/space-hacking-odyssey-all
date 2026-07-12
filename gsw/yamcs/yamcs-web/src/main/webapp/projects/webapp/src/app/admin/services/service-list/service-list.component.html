@@ -1,0 +1,16 @@
+<app-admin-page>
+  <app-admin-toolbar label="Services">
+    <ya-page-button (clicked)="refresh()" icon="refresh">Refresh view</ya-page-button>
+  </app-admin-toolbar>
+
+  <ya-panel>
+    <ya-filter-bar [formGroup]="filterForm">
+      <ya-select [options]="instanceOptions$ | async" formControlName="instance" />
+    </ya-filter-bar>
+
+    <app-services-table
+      [dataSource]="dataSource"
+      (startService)="startService($event)"
+      (stopService)="stopService($event)" />
+  </ya-panel>
+</app-admin-page>

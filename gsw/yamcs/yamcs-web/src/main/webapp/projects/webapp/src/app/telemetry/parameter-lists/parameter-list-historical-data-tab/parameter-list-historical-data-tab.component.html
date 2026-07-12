@@ -1,0 +1,53 @@
+@if (plist$ | async; as plist) {
+  <ya-panel>
+    <ya-filter-bar [formGroup]="filterForm">
+      <ya-select icon="access_time" formControlName="interval" [options]="intervalOptions" />
+
+      @if (filterForm.value["interval"] === "CUSTOM") {
+        <ya-date-time-input formControlName="customStart" />
+        <ya-date-time-input formControlName="customStop" />
+        <ya-button (click)="applyCustomDates()" [disabled]="filterForm.invalid">Apply</ya-button>
+      } @else {
+        <ya-button (click)="jumpToNow()">Jump to now</ya-button>
+      }
+
+      <div style="flex: 1 1 auto"></div>
+
+      <ya-button appearance="primary" (click)="exportParameterData()" icon="download">
+        Export CSV
+      </ya-button>
+    </ya-filter-bar>
+
+    <ya-table-window [duration]="appliedInterval" [start]="validStart" [stop]="validStop" />
+
+    @if (exportData$ | async; as exportData) {
+      <div class="table-container">
+        <table mat-table class="ya-data-table expand" [dataSource]="dataSource">
+          <ng-container matColumnDef="generationTime" sticky>
+            <th mat-header-cell *cdkHeaderCellDef>Generation time</th>
+            <td mat-cell *cdkCellDef="let row">
+              {{ row.generationTime | datetime }}
+            </td>
+          </ng-container>
+
+          @for (header of exportData.headers; track header; let i = $index) {
+            <ng-container [cdkColumnDef]="header">
+              <th mat-header-cell *cdkHeaderCellDef>{{ header }}</th>
+              <td mat-cell *cdkCellDef="let row">
+                {{ row.values[i] ?? "-" }}
+              </td>
+            </ng-container>
+          }
+
+          <ng-container cdkColumnDef="actions">
+            <th mat-header-cell *cdkHeaderCellDef class="expand"></th>
+            <td mat-cell *cdkCellDef="let row"></td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns$ | async; sticky: true"></tr>
+          <tr mat-row *cdkRowDef="let row; columns: displayedColumns$ | async"></tr>
+        </table>
+      </div>
+    }
+  </ya-panel>
+}

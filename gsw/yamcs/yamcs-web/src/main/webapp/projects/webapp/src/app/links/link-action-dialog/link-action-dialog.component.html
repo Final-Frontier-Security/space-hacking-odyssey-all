@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>{{ data.action.label }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="ya-form">
+    @for (option of options; track option; let first = $first) {
+      @if (!first) {
+        <hr class="half-break" />
+      }
+      @switch (option.type) {
+        @case ("BOOLEAN") {
+          <app-boolean-option [formControlName]="option.name" [option]="option" />
+        }
+        @case ("FLOAT") {
+          <app-float-option [formControlName]="option.name" [option]="option" />
+        }
+        @case ("INTEGER") {
+          <app-integer-option [formControlName]="option.name" [option]="option" />
+        }
+        @case ("STRING") {
+          <app-string-option [formControlName]="option.name" [option]="option" />
+        }
+      }
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <ya-button mat-dialog-close>CANCEL</ya-button>
+  <ya-button appearance="primary" (click)="sendRequest()" [disabled]="!form.valid">
+    SUBMIT
+  </ya-button>
+</mat-dialog-actions>

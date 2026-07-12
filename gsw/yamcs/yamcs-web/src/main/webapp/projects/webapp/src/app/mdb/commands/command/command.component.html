@@ -1,0 +1,22 @@
+@if (command$ | async; as command) {
+  <ya-instance-page>
+    <ya-instance-toolbar>
+      <ng-template ya-instance-toolbar-label>
+        @if (command.qualifiedName | spaceSystemName; as spaceSystemName) {
+          <a
+            routerLink="/mdb/commands"
+            [queryParams]="{ c: yamcs.context, filter: spaceSystemName }"
+            class="ya-link ya-header-link">
+            {{ spaceSystemName }}
+          </a>
+          /{{ command.qualifiedName | shortName }}
+          <ya-title-copy [text]="command.qualifiedName" />
+        }
+      </ng-template>
+    </ya-instance-toolbar>
+
+    <ya-panel>
+      <app-command-detail [command]="command" />
+    </ya-panel>
+  </ya-instance-page>
+}

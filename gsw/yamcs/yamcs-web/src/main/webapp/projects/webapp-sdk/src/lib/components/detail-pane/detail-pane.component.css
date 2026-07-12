@@ -1,0 +1,22 @@
+:host {
+  background-color: #fcfcfc;
+  float: right;
+  height: 100%;
+  width: 450px;
+  overflow: auto;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  font:
+    400 12px / 20px Roboto,
+    sans-serif;
+}
+
+:host.hidden {
+  display: none;
+}
+
+@media print {
+  :host {
+    display: none;
+  }
+}

@@ -1,0 +1,15 @@
+<ya-instance-page>
+  <ya-instance-toolbar label="Alarms" />
+
+  <div class="table-wrapper">
+    <ya-panel>
+      <app-alarms-page-tabs />
+      <div style="margin-top: 16px"></div>
+      <app-alarms-table
+        [dataSource]="dataSource"
+        [selection]="selection"
+        view="pending"
+        [mayControl]="mayControlAlarms()" />
+    </ya-panel>
+  </div>
+</ya-instance-page>

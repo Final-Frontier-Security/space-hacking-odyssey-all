@@ -1,0 +1,78 @@
+<ya-attr-list>
+  <ya-attr label="Name">
+    {{ link.name }}
+  </ya-attr>
+
+  <ya-attr label="Class">
+    {{ link.type }}
+  </ya-attr>
+
+  <ya-attr-divider />
+
+  <ya-attr label="Status" class="link-status">
+    <app-link-status [link]="link" />
+    {{ link.status }}
+  </ya-attr>
+
+  <ya-attr label="In count">
+    {{ link.dataInCount | number }}
+  </ya-attr>
+
+  <ya-attr label="Out count">
+    {{ link.dataOutCount | number }}
+  </ya-attr>
+
+  <ya-attr label="Detail">
+    {{ link.detailedStatus || "-" }}
+  </ya-attr>
+
+  @if (link.extra) {
+    <ya-attr-divider />
+    @for (entry of link.extra | keyvalue; track entry) {
+      <ya-attr [label]="entry.key">
+        @if (getEntriesForValue(entry.value); as subentries) {
+          @if (subentries.length) {
+            @for (subentry of subentries; track subentry) {
+              {{ subentry || "-" }}
+              <br />
+            }
+          } @else {
+            -
+          }
+        }
+      </ya-attr>
+    }
+  }
+</ya-attr-list>
+
+@if (mayControlLinks()) {
+  <ya-toolbar appearance="bottom">
+    @if (link.status === "DISABLED") {
+      <ya-button (click)="enableLink()">Enable link</ya-button>
+    } @else {
+      <ya-button (click)="disableLink()">Disable link</ya-button>
+    }
+    <ya-button [matMenuTriggerFor]="moreActions" dropdown="true">More</ya-button>
+    <mat-menu #moreActions class="ya-menu" yPosition="below" [overlapTrigger]="false">
+      <ng-template matMenuContent>
+        <button mat-menu-item (click)="resetCounters()">Reset counters</button>
+        @if (link.actions) {
+          <mat-divider />
+          @for (action of link.actions; track action) {
+            <button mat-menu-item [disabled]="!action.enabled" (click)="runAction(action)">
+              @if (action.style === "CHECK_BOX") {
+                <mat-icon [style.visibility]="action.checked ? 'visible' : 'hidden'">
+                  check
+                </mat-icon>
+              }
+              {{ action.label }}
+              @if (action.spec) {
+                ...
+              }
+            </button>
+          }
+        }
+      </ng-template>
+    </mat-menu>
+  </ya-toolbar>
+}

@@ -1,0 +1,17 @@
+.deprecated {
+  text-decoration: line-through;
+}
+
+.table-wrapper {
+  position: relative;
+  overflow: auto;
+  height: 100%;
+}
+
+.mat-mdc-row {
+  cursor: pointer;
+}
+
+.ya-data-table td {
+  cursor: pointer;
+}

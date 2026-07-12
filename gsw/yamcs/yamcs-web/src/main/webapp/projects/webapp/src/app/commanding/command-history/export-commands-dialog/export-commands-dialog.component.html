@@ -1,0 +1,28 @@
+<h2 mat-dialog-title>Export commands</h2>
+
+<mat-dialog-content class="ya-form">
+  <form [formGroup]="form">
+    <ya-field label="Start">
+      <ya-date-time-input formControlName="start" />
+    </ya-field>
+
+    <ya-field label="Stop">
+      <ya-date-time-input formControlName="stop" />
+    </ya-field>
+
+    <ya-field label="CSV column delimiter">
+      <ya-select formControlName="delimiter" [options]="delimiterOptions" />
+    </ya-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <ya-button mat-dialog-close>CANCEL</ya-button>
+  <ya-download-button
+    [link]="downloadURL$ | async"
+    appearance="primary"
+    (click)="closeDialog()"
+    [disabled]="!form.valid">
+    DOWNLOAD
+  </ya-download-button>
+</mat-dialog-actions>

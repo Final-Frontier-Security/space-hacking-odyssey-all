@@ -1,0 +1,34 @@
+<ya-button [matMenuTriggerFor]="selMenu" [icon]="icon()" dropdown="true">
+  @if (selected$ | async; as selected) {
+    {{ getLabel(selected) }}
+  }
+  @if (!(selected$ | async)!.length) {
+    <span>{{ emptyOption() }}</span>
+  }
+</ya-button>
+
+<mat-menu #selMenu="matMenu" yPosition="below" class="ya-menu" [overlapTrigger]="false">
+  @for (option of options$ | async; track option) {
+    @if (option.group) {
+      <mat-divider />
+    }
+    @if (isSelected(option.id)) {
+      <button mat-menu-item (click)="disableOption($event, option.id)">
+        <mat-icon>check_box_outline</mat-icon>
+        @if (option.icon) {
+          <mat-icon>{{ option.icon }}</mat-icon>
+        }
+        {{ option.label }}
+      </button>
+    }
+    @if (!isSelected(option.id)) {
+      <button mat-menu-item (click)="enableOption($event, option.id)">
+        <mat-icon>check_box_outline_blank</mat-icon>
+        @if (option.icon) {
+          <mat-icon>{{ option.icon }}</mat-icon>
+        }
+        {{ option.label }}
+      </button>
+    }
+  }
+</mat-menu>

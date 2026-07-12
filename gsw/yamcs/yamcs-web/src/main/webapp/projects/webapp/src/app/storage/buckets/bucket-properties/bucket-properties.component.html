@@ -1,0 +1,44 @@
+<app-storage-page>
+  <app-storage-toolbar>
+    <ng-template app-storage-toolbar-label>
+      <ya-page-icon-button routerLink="/storage/buckets" icon="arrow_back" />
+      {{ name }}
+    </ng-template>
+  </app-storage-toolbar>
+
+  <ya-panel>
+    <app-bucket-page-tabs [bucket]="name" />
+    @if (bucket$ | async; as bucket) {
+      <div class="small" style="margin-top: 16px">
+        <dl class="dl-horizontal">
+          <dt>Created</dt>
+          <dd>{{ bucket.created | datetime | nvl: "-" }}</dd>
+          <dt>Location</dt>
+          <dd>{{ bucket.location.description }}</dd>
+          @if (bucket.directory) {
+            <dt>Directory</dt>
+            <dd>{{ bucket.directory }}</dd>
+          }
+        </dl>
+        <h3>Bucket size</h3>
+        <dl class="dl-horizontal">
+          <dt>Limit</dt>
+          <dd>{{ bucket.maxSize | formatBytes | nvl: "-" }}</dd>
+          <dt>Used</dt>
+          <dd>{{ bucket.size | formatBytes | nvl: "-" }}</dd>
+          <dt>Available</dt>
+          <dd>{{ zeroOrMore(bucket.maxSize - bucket.size) | formatBytes }}</dd>
+        </dl>
+        <h3>Object count</h3>
+        <dl class="dl-horizontal">
+          <dt>Limit</dt>
+          <dd>{{ bucket.maxObjects | nvl: "-" }}</dd>
+          <dt>Used</dt>
+          <dd>{{ bucket.numObjects | nvl: "-" }}</dd>
+          <dt>Available</dt>
+          <dd>{{ zeroOrMore(bucket.maxObjects - bucket.numObjects) }}</dd>
+        </dl>
+      </div>
+    }
+  </ya-panel>
+</app-storage-page>

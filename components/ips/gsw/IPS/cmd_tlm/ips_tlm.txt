@@ -1,0 +1,17 @@
+TELEMETRY IPS HK_TLM_PKT BIG_ENDIAN "IPS Housekeeping Telemetry"
+  APPEND_ID_ITEM     CCSDS_STREAMID  16  UINT  0x0890  "CCSDS Packet Identification"
+  APPEND_ITEM        CCSDS_SEQUENCE  16  UINT          "CCSDS Packet Sequence Control"
+  APPEND_ITEM        CCSDS_LENGTH    16  UINT          "CCSDS Packet Data Length"
+  APPEND_ITEM        SECONDS         32  UINT          "Timestamp Seconds"
+      UNITS Seconds sec
+  APPEND_ITEM        SUBSECS         16  UINT          "Timestamp Subseconds"
+      UNITS Milliseconds ms
+  APPEND_ITEM        SPARE2ALIGN     32  UINT          "Spare"
+  APPEND_ITEM        CMD_COUNT        8  UINT          "Command Count"
+  APPEND_ITEM        CMD_ERR_COUNT    8  UINT          "Command Error Count"
+  APPEND_ITEM        MODE             8  UINT          "IPS Mode"
+    STATE MONITOR 0
+    STATE ENFORCE 1
+  APPEND_ITEM        VIOLATION_COUNT  8  UINT          "Total Violations Detected"
+  APPEND_ITEM        APPS_SCANNED     8  UINT          "Apps Scanned Last Cycle"
+  APPEND_ITEM        LAST_VIOLATION 160  STRING        "Last Unauthorized App Name"

@@ -1,0 +1,79 @@
+<div #extensionInitializers></div>
+<mat-toolbar color="primary" [class.focus]="focusMode$ | async">
+  <mat-toolbar-row
+    class="app-bar"
+    [class.replay]="(connectionInfo$ | async)?.processor?.replay"
+    [class.nosidebar]="!(sidebar$ | async)">
+    @if (tag) {
+      <div class="tag">
+        {{ tag }}
+      </div>
+    }
+    <a class="logo-wrapper" routerLink="/">
+      <img src="yamcs@2x.png" />
+    </a>
+    @if (connectionInfo$ | async; as connectionInfo) {
+      <button mat-button (click)="openInstanceDialog()">
+        {{ connectionInfo.instance.name }} ▾
+      </button>
+    }
+
+    <div style="flex: 1 1 auto"></div>
+
+    @if (user$ | async; as user) {
+      <nav mat-tab-nav-bar class="top-tabs" [tabPanel]="tabPanel">
+        <!--a mat-tab-link matTooltip="Search (/)">
+        <mat-icon>search</mat-icon>
+      </a-->
+        <a mat-tab-link routerLink="storage" routerLinkActive="active">
+          <mat-icon>perm_media</mat-icon>
+          &nbsp;&nbsp;STORAGE
+        </a>
+        @if (user | mayAccessAdminArea) {
+          <a mat-tab-link routerLink="admin" routerLinkActive="active">
+            <mat-icon>security</mat-icon>
+            &nbsp;&nbsp;ADMIN AREA
+          </a>
+        }
+        @if (siteLinks.length) {
+          <a mat-tab-link [matMenuTriggerFor]="siteLinkMenu" style="padding: 0 8px">
+            <mat-icon>link</mat-icon>
+          </a>
+        }
+        <a mat-tab-link [matMenuTriggerFor]="userMenu">
+          <mat-icon>support_agent</mat-icon>
+          &nbsp;&nbsp;{{ user.getDisplayName() || user.getName() | uppercase }}
+        </a>
+      </nav>
+    }
+
+    <mat-menu #siteLinkMenu="matMenu" overlapTrigger="false" xPosition="before">
+      @for (link of siteLinks; track link) {
+        <a mat-menu-item [href]="link.url" [target]="link.external ? '_blank' : '_self'">
+          Go to {{ link.label }}
+          @if (link.external) {
+            &nbsp;
+            <mat-icon class="icon16">open_in_new</mat-icon>
+          }
+        </a>
+      }
+    </mat-menu>
+
+    <mat-menu #userMenu="matMenu" overlapTrigger="false" xPosition="before">
+      <a mat-menu-item routerLink="profile" routerLinkActive="active">
+        <mat-icon>account_box</mat-icon>
+        &nbsp;Profile
+      </a>
+      @if (authInfo.requireAuthentication) {
+        <a mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          Sign out
+        </a>
+      }
+    </mat-menu>
+  </mat-toolbar-row>
+</mat-toolbar>
+<mat-tab-nav-panel #tabPanel>
+  <router-outlet />
+</mat-tab-nav-panel>
+<ya-print-zone />

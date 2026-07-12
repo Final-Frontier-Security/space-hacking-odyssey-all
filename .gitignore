@@ -1,0 +1,6 @@
+run/
+
+cfg/build/
+__pycache__/
+*.pyc
+opstation/holodeck/backend/app/instance/

@@ -1,0 +1,157 @@
+@use "@angular/material" as mat;
+
+@include mat.core();
+
+$ya-theme: mat.define-theme(
+  (
+    color: (
+      theme-type: light,
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    density: (
+      scale: 0,
+    ),
+  )
+);
+
+:root {
+  @include mat.all-component-themes($ya-theme);
+
+  & {
+    --mat-app-background-color: #ffffff;
+    --mat-sidenav-container-shape: 0;
+    --mat-list-active-indicator-shape: 0;
+
+    --mat-table-background-color: #ffffff;
+    --mat-table-row-item-outline-color: rgba(0, 0, 0, 0.12);
+
+    --mat-divider-color: rgba(0, 0, 0, 0.12);
+
+    --mat-button-text-label-text-size: 14px;
+    --mat-button-text-label-text-weight: 400;
+    --mat-button-text-label-text-tracking: 0.0892857143em;
+    --mat-button-text-state-layer-color: #009e87;
+    --mat-button-text-label-text-color: #009e87;
+    --mat-button-text-with-icon-horizontal-padding: 12px;
+    --mat-button-text-container-shape: 4px;
+    --mat-button-text-container-height: 30px;
+    --mat-icon-button-icon-color: #009e87;
+    --mat-button-outlined-label-text-color: #009e87;
+    --mat-button-outlined-label-text-color: #009e87;
+
+    --mat-menu-container-color: #fff;
+    --mat-menu-divider-top-spacing: 0px;
+    --mat-menu-divider-bottom-spacing: 0px;
+    --mat-menu-item-label-text-weight: 400;
+
+    --mat-tab-active-indicator-color: #009e87;
+    --mat-tab-active-focus-indicator-color: #009e87;
+    --mat-tab-active-focus-label-text-color: #009e87;
+    --mat-tab-active-hover-indicator-color: #009e87;
+    --mat-tab-active-hover-label-text-color: #009e87;
+    --mat-tab-active-ripple-color: #009e87;
+    --mat-tab-active-label-text-color: #009e87;
+    --mat-tab-divider-color: rgba(0, 0, 0, 0.12);
+    --mat-tab-inactive-ripple-color: #009e87;
+    --mat-tab-inactive-label-text-color: rgba(0, 0, 0, 0.6);
+    --mat-tab-inactive-focus-label-text-color: rgba(0, 0, 0, 0.6);
+    --mat-tab-inactive-hover-label-text-color: rgba(0, 0, 0, 0.6);
+    --mat-tab-label-text-tracking: 0.0892857143em;
+
+    --mat-dialog-container-color: #fff;
+    --mat-dialog-container-shape: 10px;
+    --mat-dialog-container-elevation-shadow:
+      0px 11px 15px -7px rgba(0, 0, 0, 0.2),
+      0px 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+    --mat-dialog-container-max-width: 60vw;
+    --mat-dialog-actions-padding: 16px 24px;
+    --mat-dialog-content-padding: 20px 24px;
+    --mat-dialog-with-actions-content-padding: 20px 24px 0;
+    --mat-dialog-headline-padding: 6px 24px 13px;
+    --mat-dialog-subhead-line-height: 1rem;
+    --mat-dialog-subhead-size: 14px;
+
+    --mat-slide-toggle-track-height: 14px;
+    --mat-slide-toggle-track-width: 30px;
+    --mat-slide-toggle-selected-icon-size: 16px;
+    --mat-slide-toggle-unselected-icon-size: 16px;
+    --mat-slide-toggle-track-outline-width: 0;
+    --mat-slide-toggle-selected-track-outline-width: 0px;
+    --mat-slide-toggle-unselected-with-icon-handle-horizontal-margin: 0;
+    --mat-slide-toggle-unselected-pressed-handle-horizontal-margin: 0;
+    --mat-slide-toggle-selected-focus-state-layer-color: #009e97;
+    --mat-slide-toggle-selected-handle-color: #009e97;
+    --mat-slide-toggle-selected-hover-state-layer-color: #009e97;
+    --mat-slide-toggle-selected-pressed-state-layer-color: #009e97;
+    --mat-slide-toggle-selected-focus-track-color: #009e975f;
+    --mat-slide-toggle-selected-hover-track-color: #009e975f;
+    --mat-slide-toggle-selected-pressed-track-color: #009e975f;
+    --mat-slide-toggle-selected-track-color: #009e975f;
+    --mat-slide-toggle-with-icon-handle-size: 16px;
+    --mat-slide-toggle-pressed-handle-size: 16px;
+    --mat-slide-toggle-state-layer-size: 16px;
+    --mat-slide-toggle-selected-focus-handle-color: #009e97;
+    --mat-slide-toggle-selected-hover-handle-color: #009e97;
+    --mat-slide-toggle-selected-pressed-handle-color: #009e97;
+    --mat-slide-toggle-selected-with-icon-handle-horizontal-margin: 0 16px;
+    --mat-slide-toggle-selected-pressed-handle-horizontal-margin: 0 16px;
+    --mat-slide-toggle-selected-icon-color: #e0e2ec;
+
+    --mat-dialog-subhead-color: #fff;
+    --mat-dialog-headline-padding: 0 12px 0;
+    --mat-dialog-subhead-line-height: 48px;
+    --mat-dialog-with-actions-content-padding: 20px 12px 0;
+    --mat-dialog-actions-padding: 12px;
+
+    --mat-paginator-container-size: 24px;
+
+    --mat-datepicker-calendar-date-selected-state-background-color: #009e97;
+    --mat-datepicker-calendar-date-today-selected-state-outline-color: #009e97;
+    --mat-datepicker-calendar-date-today-outline-color: #009e97;
+    --mat-datepicker-calendar-container-background-color: #fff;
+    --mat-datepicker-calendar-container-elevation-shadow:
+      0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+      0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+
+    --mat-toolbar-container-background-color: var(--y-background-color);
+    --mat-toolbar-title-text-size: 20px;
+    --mat-toolbar-title-text-tracking: 0.0125em;
+  }
+}
+
+// Comment out the line below if you want to use the pre-defined typography utility classes.
+// For more information: https://material.angular.io/guide/typography#using-typography-styles-in-your-application.
+// @include mat.typography-hierarchy($ya-theme);
+
+// Comment out the line below if you want to use the deprecated `color` inputs.
+//@include mat.color-variants-backwards-compatibility($ya-theme);
+
+.mat-mdc-menu-panel {
+  box-shadow:
+    0 5px 5px -3px #0003,
+    0 8px 10px 1px #00000024,
+    0 3px 14px 2px #0000001f;
+}
+
+.mat-mdc-dialog-title {
+  background-color: var(--y-app-bar-background-color);
+}
+
+.mat-mdc-dialog-title::before {
+  display: none !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-dialog-title + .mat-mdc-dialog-content {
+  padding-top: 12px !important;
+}
+
+.mat-mdc-dialog-container .mat-mdc-dialog-actions {
+  margin-top: 12px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mat-mdc-dialog-container .mat-mdc-dialog-content {
+  overflow: hidden;
+}

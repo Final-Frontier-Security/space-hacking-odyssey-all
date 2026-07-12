@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>Replicated Streams</h2>
+
+<mat-dialog-content>
+  <table yaDataTable style="width: 100%">
+    @for (stream of data.streams; track stream) {
+      <tr>
+        <td>{{ stream }}</td>
+      </tr>
+    }
+  </table>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <ya-button mat-dialog-close>Close</ya-button>
+</mat-dialog-actions>

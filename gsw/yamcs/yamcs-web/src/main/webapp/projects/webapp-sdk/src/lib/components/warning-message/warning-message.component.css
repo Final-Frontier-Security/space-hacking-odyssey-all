@@ -1,0 +1,16 @@
+.panel {
+  background-color: #fcc;
+  color: var(--y-error-color);
+  display: flex;
+  align-items: center;
+  margin-top: 1em;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.panel .icon {
+  padding: 10px;
+}
+
+.panel .icon .material-symbols {
+  vertical-align: middle;
+}

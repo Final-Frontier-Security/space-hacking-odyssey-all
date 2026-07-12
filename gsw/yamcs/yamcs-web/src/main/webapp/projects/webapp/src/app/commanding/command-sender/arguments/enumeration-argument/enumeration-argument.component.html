@@ -1,0 +1,19 @@
+<ya-field [label]="label" [class.error]="err.invalid$ | async">
+  <ya-meta>{{ type.engType }}</ya-meta>
+
+  @if (description) {
+    <ya-help>
+      {{ description }}
+    </ya-help>
+  }
+
+  <ya-errors #err [controlName]="controlName" />
+  <div class="control-group">
+    <ya-select [formControl]="formControl" [options]="selectOptions$ | async" />
+    &nbsp;
+    <ya-icon-button
+      matTooltip="Lookup enumeration state"
+      (click)="openSelectEnumerationDialog()"
+      icon="search" />
+  </div>
+</ya-field>

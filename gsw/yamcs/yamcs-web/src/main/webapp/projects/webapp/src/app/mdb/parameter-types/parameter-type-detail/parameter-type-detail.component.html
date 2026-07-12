@@ -1,0 +1,332 @@
+<dl class="dl-horizontal no-lead">
+  <dt>Parameter type</dt>
+  <dd>{{ parameterType.qualifiedName | shortName }}</dd>
+
+  <dt>System</dt>
+  <dd>
+    @if (parameterType.qualifiedName | spaceSystemName; as spaceSystemName) {
+      <a
+        routerLink="/mdb/parameter-types"
+        [queryParams]="{ c: yamcs.context, filter: spaceSystemName }"
+        class="ya-link">
+        {{ spaceSystemName }}
+      </a>
+    }
+  </dd>
+
+  @for (alias of parameterType.alias; track alias) {
+    <dt>{{ alias.namespace }}</dt>
+    <dd>{{ alias.name }}</dd>
+  }
+
+  <dt>Type</dt>
+  <dd>
+    @if (parameterType.engType; as engType) {
+      <span class="mono">
+        {{ engType }}
+      </span>
+    } @else {
+      -
+    }
+  </dd>
+
+  <dt>Units</dt>
+  <dd>
+    @if (parameterType.unitSet; as unitSet) {
+      {{ unitSet | units }}
+    } @else {
+      -
+    }
+  </dd>
+
+  @if (parameterType.signed !== undefined) {
+    <dt>Signed</dt>
+    <dd>
+      {{ parameterType.signed }}
+    </dd>
+  }
+  @if (parameterType.sizeInBits !== undefined) {
+    <dt>Size in bits</dt>
+    <dd>
+      {{ parameterType.sizeInBits }}
+    </dd>
+  }
+
+  <dt>Short description</dt>
+  <dd>{{ parameterType.shortDescription || "-" }}</dd>
+
+  <dt>Long description</dt>
+  <dd>
+    @if (parameterType.longDescription) {
+      <app-markdown [text]="parameterType.longDescription" />
+    } @else {
+      -
+    }
+  </dd>
+</dl>
+
+@if (parameterType.usedBy?.length) {
+  <div class="section-divider">
+    <mat-divider />
+  </div>
+
+  <h4>Used by</h4>
+  <table yaDataTable>
+    <tr>
+      <th>Type</th>
+      <th>Ref</th>
+      <th class="wrap200">Description</th>
+    </tr>
+    @for (parameter of parameterType.usedBy; track parameter) {
+      <tr>
+        <td>Parameter</td>
+        <td>
+          <a
+            [routerLink]="['/mdb/parameters/', parameter.qualifiedName]"
+            [queryParams]="{ c: yamcs.context }">
+            {{
+              parameter.qualifiedName | relativize: (parameterType.qualifiedName | spaceSystemName)
+            }}
+          </a>
+        </td>
+        <td class="wrap200">{{ parameter.shortDescription || "-" }}</td>
+      </tr>
+    }
+  </table>
+  <p>&nbsp;</p>
+}
+
+@if (parameterType.dataEncoding; as dataEncoding) {
+  <div class="section-divider">
+    <mat-divider />
+  </div>
+
+  <h4>Data encoding</h4>
+  <dl class="dl-horizontal no-trail">
+    <dt>Size in bits</dt>
+    <dd>{{ dataEncoding?.sizeInBits | nvl: "-" }}</dd>
+    @if (dataEncoding?.littleEndian !== undefined) {
+      <dt>Byte order</dt>
+      <dd>
+        @if (dataEncoding?.littleEndian !== undefined) {
+          {{ dataEncoding?.littleEndian ? "Little endian" : "Big endian" }}
+        }
+        @if (dataEncoding?.littleEndian === undefined) {
+          -
+        }
+      </dd>
+    }
+    <dt>Encoding</dt>
+    <dd>{{ dataEncoding?.encoding || "-" }}</dd>
+  </dl>
+}
+
+@if (parameterType.engType === "integer" || parameterType.engType === "float") {
+  <div class="section-divider">
+    <mat-divider />
+  </div>
+
+  <h4>Calibration</h4>
+  <app-parameter-calibration
+    [ptype]="parameterType"
+    [relto]="parameterType.qualifiedName | spaceSystemName" />
+  <p>&nbsp;</p>
+}
+
+@if (parameterType.engType === "enumeration") {
+  <div class="section-divider">
+    <mat-divider />
+  </div>
+
+  <h4>Enumeration</h4>
+  @if (parameterType.engType === "enumeration") {
+    <table yaDataTable>
+      <tr>
+        <th style="width: 50px">Value</th>
+        <th style="width: 100px">Label</th>
+        <th style="width: 300px">Description</th>
+        <th>Alarm level (default)</th>
+        @for (contextAlarm of parameterType.contextAlarm; track contextAlarm) {
+          <th>
+            <app-expression
+              [expression]="contextAlarm.context"
+              [relto]="parameterType.qualifiedName | spaceSystemName" />
+          </th>
+        }
+      </tr>
+      @for (enumValue of parameterType.enumValues; track enumValue) {
+        <tr>
+          <td style="white-space: nowrap">{{ enumValue.value }}</td>
+          <td style="white-space: nowrap">{{ enumValue.label }}</td>
+          <td>{{ enumValue.description || "-" }}</td>
+          <td>
+            @if (getDefaultAlarmLevel(parameterType, enumValue.label); as level) {
+              <app-alarm-level [level]="level" [grayscale]="true" />
+              {{ level }}
+            } @else {
+              <span>-</span>
+            }
+          </td>
+          @for (contextAlarm of parameterType.contextAlarm; track contextAlarm) {
+            <td>
+              @if (getEnumerationAlarmLevel(contextAlarm, enumValue.label); as level) {
+                <app-alarm-level [level]="level" [grayscale]="true" />
+                {{ level }}
+              } @else {
+                <span>-</span>
+              }
+            </td>
+          }
+        </tr>
+      }
+      @for (enumRange of parameterType.enumRanges; track enumRange) {
+        <tr>
+          <td style="white-space: nowrap">
+            <ya-interval
+              [left]="enumRange.min"
+              [right]="enumRange.max"
+              [leftInclusive]="enumRange.minInclusive"
+              [rightInclusive]="enumRange.maxInclusive" />
+          </td>
+          <td style="white-space: nowrap">{{ enumRange.label }}</td>
+          <td>{{ enumRange.description || "-" }}</td>
+          <td>
+            @if (getDefaultAlarmLevel(parameterType, enumRange.label); as level) {
+              <app-alarm-level [level]="level" [grayscale]="true" />
+              {{ level }}
+            } @else {
+              <span>-</span>
+            }
+          </td>
+          @for (context of parameterType.contextAlarm; track context) {
+            <td>
+              @if (getEnumerationAlarmLevel(context, enumRange.label); as level) {
+                <app-alarm-level [level]="level" [grayscale]="true" />
+                {{ level }}
+              } @else {
+                <span>-</span>
+              }
+            </td>
+          }
+        </tr>
+      }
+      <tr>
+        <td>Other</td>
+        <td>UNDEF</td>
+        <td>-</td>
+        <td>
+          @if (parameterType.defaultAlarm?.defaultLevel; as level) {
+            <app-alarm-level [level]="level" [grayscale]="true" />
+            {{ level }}
+          }
+        </td>
+        @for (context of parameterType.contextAlarm; track context) {
+          <td>
+            @if (context.alarm.defaultLevel; as level) {
+              <app-alarm-level [level]="level" [grayscale]="true" />
+              {{ level }}
+            }
+          </td>
+        }
+      </tr>
+    </table>
+  }
+  <p>&nbsp;</p>
+}
+
+@if (parameterType.engType === "integer" || parameterType.engType === "float") {
+  <div class="section-divider">
+    <mat-divider />
+  </div>
+
+  <h4>Alarm Info</h4>
+  @if (parameterType.defaultAlarm || parameterType.contextAlarm) {
+    @if (parameterType.defaultAlarm; as alarm) {
+      <dl class="dl-horizontal">
+        <dt>Min. violations</dt>
+        <dd>{{ alarm.minViolations }}</dd>
+      </dl>
+      <table yaDataTable>
+        <tr>
+          <th>Alarm level (default)</th>
+          <th>Range</th>
+        </tr>
+        @for (range of alarm.staticAlarmRanges; track range) {
+          <tr>
+            <td>
+              <app-alarm-level [level]="range.level" [grayscale]="true" />
+              {{ range.level }}
+            </td>
+            <td>
+              @if (
+                range.minInclusive !== undefined ||
+                range.minExclusive !== undefined ||
+                range.maxInclusive !== undefined ||
+                range.maxExclusive !== undefined
+              ) {
+                <ya-interval
+                  [left]="range.minInclusive | nvl: range.minExclusive"
+                  [right]="range.maxInclusive | nvl: range.maxExclusive"
+                  [leftInclusive]="range.minInclusive !== undefined"
+                  [rightInclusive]="range.maxInclusive !== undefined"
+                  [outside]="true" />
+              } @else {
+                -
+              }
+            </td>
+          </tr>
+        }
+      </table>
+    }
+    @for (contextAlarm of parameterType.contextAlarm; track contextAlarm; let first = $first) {
+      @if (!first) {
+        <p>&nbsp;</p>
+      }
+      <h5>
+        Context:
+        <app-expression
+          [expression]="contextAlarm.context"
+          [relto]="parameterType.qualifiedName | spaceSystemName" />
+      </h5>
+      <dl class="dl-horizontal">
+        <dt>Min. violations</dt>
+        <dd>{{ contextAlarm.alarm.minViolations }}</dd>
+      </dl>
+      <table yaDataTable>
+        <tr>
+          <th>Level</th>
+          <th>Range</th>
+        </tr>
+        @for (range of contextAlarm.alarm.staticAlarmRanges; track range) {
+          <tr>
+            <td>
+              <app-alarm-level [level]="range.level" [grayscale]="true" />
+              {{ range.level }}
+            </td>
+            <td>
+              @if (
+                range.minInclusive !== undefined ||
+                range.minExclusive !== undefined ||
+                range.maxInclusive !== undefined ||
+                range.maxExclusive !== undefined
+              ) {
+                <ya-interval
+                  [left]="range.minInclusive | nvl: range.minExclusive"
+                  [right]="range.maxInclusive | nvl: range.maxExclusive"
+                  [leftInclusive]="range.minInclusive !== undefined"
+                  [rightInclusive]="range.maxInclusive !== undefined"
+                  [outside]="true" />
+              } @else {
+                -
+              }
+            </td>
+          </tr>
+        }
+      </table>
+    }
+  } @else {
+    None
+  }
+
+  <p>&nbsp;</p>
+}

@@ -1,0 +1,38 @@
+:host {
+  text-decoration: none;
+  display: inline-flex;
+  vertical-align: middle;
+  align-items: center;
+  color: #000;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  font-size: 12px;
+  height: 18px;
+}
+
+:host:hover {
+  color: #009e87;
+}
+
+:host.disabled {
+  cursor: not-allowed;
+  color: #aaa;
+}
+
+:host.padding {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.material-symbols {
+  vertical-align: middle;
+  font-size: 18px !important;
+  height: 18px !important;
+  width: 18px !important;
+}
+
+.material-symbols:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 50%;
+}

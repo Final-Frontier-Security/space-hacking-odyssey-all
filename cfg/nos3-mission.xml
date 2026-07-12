@@ -1,0 +1,36 @@
+<nos3-mission-cfg>
+    <!-- Mission Start Time (J2000 UTC) -->
+    <!-- Default time: 814254200.0, 20 Oct 2025 -->
+    <start-time>814254200.0</start-time>
+
+    <!-- Ground Software -->
+    <!-- cosmos (default), openc3, fprime, or yamcs -->
+    <gsw>openc3</gsw>
+
+    <!-- AWS split-host deploy (optional): use launch_sat_aws.sh / launch_gsw_aws.sh -->
+    <deploy>aws</deploy>
+    <gsw-ip>10.10.20.10</gsw-ip>
+    <sat-ip>10.10.10.10</sat-ip>
+
+    <!-- Flight Software -->
+    <!-- cfs (default) or fprime -->
+    <fsw>cfs</fsw>
+
+    <!-- Scenario -->
+    <!-- STF1 (default) or Gateway -->
+    <scenario>STF1</scenario>
+
+    <!-- Number of spacecraft -->
+    <!-- Note this is experimental and not ready for use beyond proof of concept -->
+    <number-spacecraft>1</number-spacecraft>
+
+    <!-- Spacecraft 1 Configuration - options are as follows -->
+    <!-- sc-minimal-config.xml (only cFS heritage applications and the sample app) -->
+    <!-- sc-mission-config.xml (default, minimal + generic components and ADCS) -->
+    <!-- sc-research-config.xml (mission + research integrations, arducam, and generic-thruster) -->
+    <!-- sc-fprime-config.xml (only configuration supporting F') -->
+    <sc-1-cfg>spacecraft/sc-mission-config.xml</sc-1-cfg>
+
+    <!-- Spacecraft N Configuration -->
+    <!-- <sc-N-cfg>sc-minimal-config.xml</sc-N-cfg> -->
+</nos3-mission-cfg>

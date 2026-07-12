@@ -1,0 +1,53 @@
+# IPS Allowlist - Authorized cFS applications
+# One app name per line. Lines starting with # are comments.
+# This file is read from /cf/ips_allowlist.txt at IPS startup.
+# Names must match the cFE registered name (4th column in startup script).
+#
+# --- cFE Core ---
+CFE_ES
+CFE_EVS
+CFE_SB
+CFE_TBL
+CFE_TIME
+# --- Libraries ---
+CRYPTOLIB
+HW_LIB
+IO_LIB
+CFS_LIB
+# --- Infrastructure Apps ---
+SCH
+CI
+TO
+CI_LAB_APP
+TO_LAB_APP
+# --- Heritage cFS Apps ---
+CF
+DS
+FM
+LC
+SBN
+SC
+CS
+HK
+HS
+MD
+MM
+# --- NOS3 Components ---
+ADCS
+CAM
+CSS
+EPS
+FSS
+IMU
+MAG
+RADIO
+RW
+TORQUER
+NAV
+SAMPLE
+ST
+SYN
+THRUSTER
+MGR
+CFDP
+IPS

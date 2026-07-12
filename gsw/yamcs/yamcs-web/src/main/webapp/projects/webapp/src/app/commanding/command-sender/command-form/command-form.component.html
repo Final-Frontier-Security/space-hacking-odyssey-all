@@ -1,0 +1,37 @@
+<form [formGroup]="form" class="ya-form">
+  <ya-stepper>
+    <ng-content select="[head]" />
+
+    <ya-stepper-step label="Arguments" [expanded]="true">
+      <app-command-arguments-form
+        [formGroup]="form"
+        [templateProvider]="templateProvider"
+        [command]="command" />
+    </ya-stepper-step>
+
+    @if (showCommandOptions()) {
+      <ya-stepper-step label="Advanced options">
+        <app-command-options-form [formGroup]="form" [templateProvider]="templateProvider" />
+      </ya-stepper-step>
+    }
+
+    @if (stackMode) {
+      <ya-stepper-step label="Stack comment">
+        <app-stack-comment-form [formGroup]="form" [templateProvider]="templateProvider" />
+      </ya-stepper-step>
+
+      <ya-stepper-step label="Stack advancement">
+        <app-stack-advancement-form
+          [formGroup]="form"
+          [templateProvider]="templateProvider"
+          [command]="command" />
+      </ya-stepper-step>
+    } @else {
+      <ya-stepper-step label="Comment">
+        <app-command-comment-form [formGroup]="form" [templateProvider]="templateProvider" />
+      </ya-stepper-step>
+    }
+
+    <ng-content select="[tail]" />
+  </ya-stepper>
+</form>

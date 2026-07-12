@@ -1,0 +1,234 @@
+<ya-instance-page>
+  <ya-instance-toolbar>
+    <ng-template ya-instance-toolbar-label>
+      <ya-page-icon-button
+        [routerLink]="folderLink"
+        [queryParams]="{ c: yamcs.context }"
+        icon="arrow_back" />
+      {{ filename | basename }}
+    </ng-template>
+
+    <ya-page-button
+      matTooltip="Save stack"
+      (clicked)="stackFileService.saveStack()"
+      [disabled]="!(stackFileService.dirty$ | async)"
+      icon="save">
+      Save
+    </ya-page-button>
+
+    <ya-vertical-divider />
+
+    <ya-page-button
+      matTooltip="Add a step below"
+      [disabled]="!format || (running$ | async)"
+      [matMenuTriggerFor]="addEntryMenu"
+      icon="add_box"
+      dropdown="true">
+      Add step
+    </ya-page-button>
+    <mat-menu class="ya-menu" #addEntryMenu="matMenu">
+      <a mat-menu-item (click)="addTextEntry()">
+        <mat-icon>notes</mat-icon>
+        Display text
+      </a>
+      <mat-divider />
+      <a mat-menu-item (click)="addCheckEntry()">
+        <mat-icon>toll</mat-icon>
+        List parameters
+      </a>
+      <a mat-menu-item (click)="addVerifyEntry()">
+        <mat-icon>checklist_rtl</mat-icon>
+        Verify parameters
+      </a>
+      <mat-divider />
+      <a mat-menu-item (click)="addCommandEntry()">
+        <mat-icon>rss_feed</mat-icon>
+        Send command
+      </a>
+    </mat-menu>
+    <ya-page-icon-button
+      matTooltip="Edit the selected step"
+      [disabled]="!format || (running$ | async) || !(selectedEntry$ | async)"
+      (clicked)="editSelectedEntry()"
+      icon="edit" />
+    <ya-page-icon-button
+      matTooltip="Cut the selected step"
+      [disabled]="!format || (running$ | async) || !(selectedEntry$ | async)"
+      (clicked)="cutSelectedEntry()"
+      icon="content_cut" />
+    <ya-page-icon-button
+      matTooltip="Copy the selected step"
+      [disabled]="!format || (running$ | async) || !(selectedEntry$ | async)"
+      (clicked)="copySelectedEntry()"
+      icon="content_copy" />
+    <ya-page-icon-button
+      matTooltip="Paste entry from the clipboard"
+      [disabled]="!format || (running$ | async) || !(clipboardEntry$ | async)"
+      (clicked)="pasteEntry()"
+      icon="content_paste" />
+
+    <ya-vertical-divider />
+
+    <ya-page-icon-button
+      matTooltip="Run the selected step"
+      [disabled]="!format || (running$ | async) || !(selectedEntry$ | async)"
+      (clicked)="runSelection()"
+      icon="play_arrow" />
+    <ya-page-icon-button
+      matTooltip="Stop current execution"
+      [disabled]="!format || !(running$ | async)"
+      (clicked)="stopRun()"
+      icon="stop" />
+    <ya-page-icon-button
+      matTooltip="Clear all outputs"
+      [disabled]="!format || (running$ | async) || !(hasState$ | async)"
+      (clicked)="clearOutputs()"
+      icon="refresh" />
+    <ya-page-icon-button
+      matTooltip="Run all from selected step"
+      [disabled]="!format || (running$ | async) || !(selectedEntry$ | async)"
+      (clicked)="runFromSelection()"
+      icon="playlist_play" />
+
+    <ya-vertical-divider />
+
+    @if (showSchedule()) {
+      <ya-page-button
+        matTooltip="Run stack at a later time"
+        (clicked)="openScheduleStackDialog()"
+        [disabled]="!loaded || format !== 'ycs' || !entries$.value.length"
+        icon="schedule">
+        Schedule
+      </ya-page-button>
+    }
+    <ya-vertical-divider />
+
+    <ya-page-button
+      matTooltip="Export stack"
+      [matMenuTriggerFor]="exportMenu"
+      [disabled]="!format"
+      (clicked)="setExportURLs()"
+      icon="open_in_new">
+      Export
+    </ya-page-button>
+    <mat-menu class="ya-menu" #exportMenu="matMenu">
+      <a mat-menu-item [href]="jsonBlobUrl" [download]="(filename | basename) + '.ycs'">
+        <mat-icon>data_object</mat-icon>
+        YCS FILE
+      </a>
+      <a mat-menu-item [href]="xmlBlobUrl" [download]="(filename | basename) + '.xml'">
+        <mat-icon>code</mat-icon>
+        <span style="vertical-align: middle">
+          XML FILE
+          <span style="color: #cc0000">(legacy)</span>
+        </span>
+      </a>
+    </mat-menu>
+  </ya-instance-toolbar>
+
+  <div class="main-pane">
+    <app-stack-file-page-tabs [objectName]="objectName">
+      @if (running$ | async) {
+        <ya-dots />
+      }
+    </app-stack-file-page-tabs>
+
+    @if (loaded && !format) {
+      <ya-empty-message>
+        <mat-icon style="vertical-align: bottom; margin-right: 10px">link_off</mat-icon>
+        Unsupported stack format
+      </ya-empty-message>
+    }
+    @if (loaded && format && !entries$.value.length) {
+      <ya-empty-message>
+        Empty stack
+        <br />
+        Click
+        <mat-icon inline style="vertical-align: bottom">add_box</mat-icon>
+        to start adding steps
+      </ya-empty-message>
+    }
+
+    <div #entryParent class="tab-content" cdkDropList (cdkDropListDropped)="handleDrop($event)">
+      <div id="drag-boundary">
+        @for (entry of entries$ | async; track entry) {
+          <div
+            cdkDrag
+            cdkDragBoundary="#drag-boundary"
+            class="entry"
+            [class.display-text]="entry.type === 'text'"
+            [class.selected]="entry === (selectedEntry$ | async)"
+            (click)="selectEntry(entry)"
+            (dblclick)="editEntry(entry)">
+            <div class="in">
+              <div cdkDragHandle class="seq">
+                @if (entry.executing) {
+                  [*]:
+                } @else if (entry.executionNumber === 0 || entry.executionNumber) {
+                  [{{ entry.executionNumber }}]:
+                } @else if (entry.executionNumber !== 0 && !entry.executionNumber) {
+                  [ ]:
+                }
+              </div>
+              <div class="body">
+                @if (entry.type === "check") {
+                  <app-stacked-check-entry [entry]="entry" [pvals]="pvals$ | async" />
+                } @else if (entry.type === "command") {
+                  <app-stacked-command-entry [entry]="entry" />
+                } @else if (entry.type === "text") {
+                  <app-stacked-text-entry [entry]="entry" />
+                } @else if (entry.type === "verify") {
+                  <app-stacked-verify-entry [entry]="entry" [pvals]="pvals$ | async" />
+                }
+
+                @if (entry.comment) {
+                  <div class="comment">
+                    <div class="title">
+                      <mat-icon class="icon14">info</mat-icon>
+                      <span class="text">Info</span>
+                    </div>
+                    <app-markdown [text]="entry.comment" />
+                  </div>
+                }
+              </div>
+            </div>
+            @if (entry.hasOutputs()) {
+              <div class="out">
+                <div class="seq" (click)="selectEntry(entry)"></div>
+                <div class="body" [class.err]="entry.err">
+                  @if (entry.err) {
+                    {{ entry.err }}
+                  } @else if (entry.type === "command") {
+                    <app-yamcs-acknowledgments-table [command]="entry.record" [inline]="true" />
+                    @if ((entry.record?.extra || []).length) {
+                      <div class="block">
+                        <app-extra-acknowledgments-table [command]="entry.record" [inline]="true" />
+                      </div>
+                    }
+                  } @else if (entry.type === "check") {
+                    <table>
+                      @for (namedPval of entry.pvals; track namedPval) {
+                        <tr>
+                          <td style="padding-right: 20px">{{ namedPval.parameter }}</td>
+                          <td>
+                            @if (namedPval.pval?.engValue; as value) {
+                              <ya-value [value]="value" />
+                            } @else {
+                              -
+                            }
+                          </td>
+                        </tr>
+                      }
+                    </table>
+                  } @else if (entry.type === "verify") {
+                    <app-verify-table [entry]="entry" />
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</ya-instance-page>

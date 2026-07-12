@@ -1,0 +1,349 @@
+options
+{
+    STATIC=false;
+    IGNORE_CASE=false;
+}
+
+PARSER_BEGIN(FilterParser)
+package org.yamcs.utils.parser;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.HexFormat;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import org.yamcs.utils.parser.ast.*;
+
+@SuppressWarnings({"serial", "unused"})
+public class FilterParser<T> {
+
+    private static final HexFormat HEX = HexFormat.of();
+
+    // All available fields (lowercase)
+    private Set<String> fields = new HashSet<String>();
+
+    // Fields that are part of the actual query (lowercase)
+    private Set<String> queryFields = new HashSet<String>();
+
+    // True if the query includes at least one text comparison
+    private boolean includesTextSearch;
+
+    // Resolvers by lowercase field
+    private Map<String, BiFunction<T, String, String>> prefixResolvers = new HashMap<String, BiFunction<T, String, String>>();
+    private Map<String, Function<T, String>> stringResolvers = new HashMap<String, Function<T, String>>();
+    private Map<String, Function<T, Collection<String>>> stringCollectionResolvers = new HashMap<String, Function<T, Collection<String>>>();
+    private Map<String, Function<T, Number>> numberResolvers = new HashMap<String, Function<T, Number>>();
+    private Map<String, Function<T, Collection<? extends Number>>> numberCollectionResolvers = new HashMap<String, Function<T, Collection<? extends Number>>>();
+    private Map<String, Function<T, Boolean>> booleanResolvers = new HashMap<String, Function<T, Boolean>>();
+    private Map<String, Function<T, byte[]>> binaryResolvers = new HashMap<String, Function<T, byte[]>>();
+    private Map<String, Function<T, ? extends Enum<?>>> enumResolvers = new HashMap<String, Function<T, ? extends Enum<?>>>();
+
+    // Enum class by lowercase field
+    private Map<String, Class<? extends Enum<?>>> enumClassByField = new HashMap<String, Class<? extends Enum<?>>>();
+
+    public boolean isQueryField(String field) {
+        return queryFields.contains(field.toLowerCase());
+    }
+
+    public boolean includesTextSearch() {
+       return includesTextSearch;
+    }
+
+    public void addPrefixField(String field, BiFunction<T, String, String> resolver) {
+        String lcField = field.toLowerCase();
+        fields.add(lcField);
+        prefixResolvers.put(lcField, resolver);
+    }
+
+    public void addStringField(String field, Function<T, String> resolver) {
+        String lcField = field.toLowerCase();
+        fields.add(lcField);
+        stringResolvers.put(lcField, resolver);
+    }
+
+    public void addStringCollectionField(String field, Function<T, Collection<String>> resolver) {
+        String lcField = field.toLowerCase();
+        fields.add(lcField);
+        stringCollectionResolvers.put(lcField, resolver);
+    }
+
+    public <E extends Enum<?>> void addEnumField(String field, Class<E> enumClass, Function<T, E> resolver) {
+        String lcField = field.toLowerCase();
+        fields.add(lcField);
+        enumResolvers.put(lcField, resolver);
+        enumClassByField.put(lcField, enumClass);
+    }
+
+    public void addNumberField(String field, Function<T, Number> resolver) {
+        String lcField = field.toLowerCase();
+        fields.add(lcField);
+        numberResolvers.put(lcField, resolver);
+    }
+
+    public void addNumberCollectionField(String field, Function<T, Collection<? extends Number>> resolver) {
+        String lcField = field.toLowerCase();
+        fields.add(lcField);
+        numberCollectionResolvers.put(lcField, resolver);
+    }
+
+    public void addBooleanField(String field, Function<T, Boolean> resolver) {
+        String lcField = field.toLowerCase();
+        fields.add(lcField);
+        booleanResolvers.put(lcField, resolver);
+    }
+
+    public void addBinaryField(String field, Function<T, byte[]> resolver) {
+        String lcField = field.toLowerCase();
+        fields.add(lcField);
+        binaryResolvers.put(lcField, resolver);
+    }
+
+    public BiFunction<T, String, String> getPrefixResolver(String field) {
+        for (var entry : prefixResolvers.entrySet()) {
+            if (field.startsWith(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    public Function<T, String> getStringResolver(String field) {
+        return stringResolvers.get(field);
+    }
+
+    public Function<T, Collection<String>> getStringCollectionResolver(String field) {
+        return stringCollectionResolvers.get(field);
+    }
+
+    public Function<T, Number> getNumberResolver(String field) {
+        return numberResolvers.get(field);
+    }
+
+    public Function<T, Collection<? extends Number>> getNumberCollectionResolver(String field) {
+        return numberCollectionResolvers.get(field);
+    }
+
+    public Function<T, Boolean> getBooleanResolver(String field) {
+        return booleanResolvers.get(field);
+    }
+
+    public Function<T, byte[]> getBinaryResolver(String field) {
+        return binaryResolvers.get(field);
+    }
+
+    public Function<T, ? extends Enum<?>> getEnumResolver(String field) {
+        return enumResolvers.get(field);
+    }
+
+    public Class<? extends Enum<?>> getEnumClass(String field) {
+        return enumClassByField.get(field);
+    }
+
+    /**
+     * Finds the constant for an Enum label, but case-insensitive.
+     */
+    public <E extends Enum<?>> E findEnum(Class<E> enumeration, String value) {
+        for (E enumConstant : enumeration.getEnumConstants()) {
+            if (enumConstant.name().compareToIgnoreCase(value) == 0) {
+                return enumConstant;
+            }
+        }
+        return null;
+    }
+}
+PARSER_END(FilterParser)
+
+
+SPECIAL_TOKEN :
+{
+  < SINGLE_LINE_COMMENT: "--"(~["\n","\r"])* ("\n"|"\r"|"\r\n")? >
+}
+
+TOKEN :
+{
+  < WS: ([" ", "\t", "\n", "\r"])+ >
+}
+
+TOKEN :
+{
+  < AND:                      "AND" >
+| < EQUAL_TO:                 "=" >
+| < GREATER_THAN:             ">" >
+| < GREATER_THAN_OR_EQUAL_TO: ">=" >
+| < HAS:                      ":" >
+| < LESS_THAN:                "<" >
+| < LESS_THAN_OR_EQUAL_TO:    "<=" >
+| < LPAREN:                   "(" >
+| < MINUS:                    "-" >
+| < NOT:                      "NOT" >
+| < NOT_EQUAL_TO:             "!=" >
+| < OR:                       "OR" >
+| < RE_EQUAL_TO:              "=~" >
+| < RE_NOT_EQUAL_TO:          "!~" >
+| < RPAREN:                   ")" >
+}
+
+TOKEN :
+{
+  < STRING: ["A"-"Z", "a"-"z", "0"-"9", "_"](["A"-"Z", "a"-"z", "0"-"9", "_", "-", "."])* >
+| < QUOTED_STRING: "\""
+    (
+       "\\" ~[]     //any escaped character
+    |  ~["\"","\\"]  //any character except quote or backslash
+    )*
+    "\"" >
+}
+
+AndExpression parse() :
+{
+  AndExpression result = null;
+}
+{
+  [ LOOKAHEAD(2) <WS>] [ result = expr() ] [<WS>] <EOF> { return result; }
+}
+
+AndExpression expr() :
+{
+  AndExpression and;
+}
+{
+  and = and() [ LOOKAHEAD(2) <WS>] { return and; }
+}
+
+AndExpression and() :
+{
+  OrExpression clause;
+  List<OrExpression> clauses = new ArrayList<OrExpression>();
+}
+{
+  clause = or() { clauses.add(clause); }
+  ( LOOKAHEAD(2) <WS> [<AND> <WS>] clause = or() { clauses.add(clause); } )*
+  {
+    return new AndExpression(clauses);
+  }
+}
+
+OrExpression or() :
+{
+  UnaryExpression clause;
+  List<UnaryExpression> clauses = new ArrayList<UnaryExpression>();
+}
+{
+  clause = unary() { clauses.add(clause); }
+  ( LOOKAHEAD(2) <WS> <OR> <WS> clause=unary() { clauses.add(clause); } )*
+  {
+    return new OrExpression(clauses);
+  }
+}
+
+UnaryExpression unary() :
+{
+  Comparison comparison;
+  AndExpression expr;
+}
+{
+  LOOKAHEAD(3)
+  <NOT> [<WS>] <LPAREN> [<WS>] expr = expr() [<WS>] <RPAREN> { return new UnaryExpression(expr, true); }
+| <NOT> [<WS>] comparison = comparison() { return new UnaryExpression(comparison, true); }
+| <MINUS> comparison = comparison() { return new UnaryExpression(comparison, true); }
+| <LPAREN> expr = expr() <RPAREN> { return new UnaryExpression(expr, false); }
+| comparison = comparison() { return new UnaryExpression(comparison, false); }
+}
+
+Comparison comparison() :
+{
+  String comparable;
+  Token comparableToken;
+  Token comparatorToken = null;
+  Comparator comparator = null;
+  String value = null;
+  Pattern pattern = null;
+  byte[] binary = null;
+}
+{
+  comparable = term() {
+    comparableToken = token;
+  }
+  [ LOOKAHEAD(2) [<WS>] comparator = comparator() {
+    comparatorToken = token;
+  }
+  [<WS>] value = term() ] {
+    String lcComparable = comparable.toLowerCase();
+    if (comparator == null) {
+        includesTextSearch = true;
+    } else {
+        queryFields.add(lcComparable);
+        if (!fields.contains(lcComparable)) {
+            boolean prefixMatch = false;
+            for (String prefix : prefixResolvers.keySet()) {
+                if (lcComparable.startsWith(prefix)) {
+                    prefixMatch = true;
+                    break;
+                }
+            }
+            if (!prefixMatch) {
+                throw new UnknownFieldException(lcComparable, comparableToken, tokenImage);
+            }
+        }
+
+        Class<? extends Enum<?>> enumClass = enumClassByField.get(lcComparable);
+        if (enumClass != null) {
+            if (!value.equalsIgnoreCase("null") && findEnum(enumClass, value) == null) {
+                throw new IncorrectTypeException(value, token, tokenImage);
+            }
+        }
+
+        if (binaryResolvers.containsKey(lcComparable)) {
+            if (!value.equalsIgnoreCase("null")) {
+                try {
+                    binary = HEX.parseHex(value);
+                } catch (IllegalArgumentException e) {
+                    throw new IncorrectTypeException(value, token, tokenImage);    
+                }
+            }
+        }
+
+        if (comparator == Comparator.RE_EQUAL_TO || comparator == Comparator.RE_NOT_EQUAL_TO) {
+            try {
+                pattern = Pattern.compile(value);
+            } catch (PatternSyntaxException e) {
+                throw new InvalidPatternException(value, token, tokenImage);
+            }
+        }
+    }
+
+    return new Comparison(lcComparable, comparator, value, pattern, binary);
+  }
+}
+
+String term() :
+{}
+{
+  <STRING> { return token.image; }
+| <QUOTED_STRING> {
+    String s = token.image;
+    return s.substring(1, s.length() - 1).replace("\\\"","\"").replace("\\\\","\\");
+  }
+}
+
+Comparator comparator() :
+{}
+{
+  <EQUAL_TO> { return Comparator.EQUAL_TO; }
+| <NOT_EQUAL_TO> { return Comparator.NOT_EQUAL_TO; }
+| <LESS_THAN> { return Comparator.LESS_THAN; }
+| <GREATER_THAN> { return Comparator.GREATER_THAN; }
+| <LESS_THAN_OR_EQUAL_TO> { return Comparator.LESS_THAN_OR_EQUAL_TO; }
+| <GREATER_THAN_OR_EQUAL_TO> { return Comparator.GREATER_THAN_OR_EQUAL_TO; }
+| <HAS> { return Comparator.HAS; }
+| <RE_EQUAL_TO> { return Comparator.RE_EQUAL_TO; }
+| <RE_NOT_EQUAL_TO> { return Comparator.RE_NOT_EQUAL_TO; }
+}

@@ -1,0 +1,11 @@
+@for (color of colors; track color; let i = $index) {
+  <div
+    class="box"
+    [class.selected]="color === selectedColor"
+    [style.backgroundColor]="color"
+    (click)="doSelect(color)"></div>
+  @if ((i + 1) % 10 === 0) {
+    <div style="clear: both"></div>
+  }
+}
+<div style="clear: both"></div>

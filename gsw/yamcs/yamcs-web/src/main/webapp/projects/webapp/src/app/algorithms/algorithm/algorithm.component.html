@@ -1,0 +1,45 @@
+@if (algorithm$ | async; as algorithm) {
+  <ya-instance-page>
+    <ya-instance-toolbar>
+      <ng-template ya-instance-toolbar-label>
+        @for (parent of algorithm.qualifiedName | parents; track parent; let isFirst = $first) {
+          @if (!isFirst) {
+            <a
+              routerLink="/algorithms"
+              class="ya-link ya-header-link"
+              [queryParams]="{ c: yamcs.context, system: parent.path }">
+              {{ parent.name }}
+            </a>
+          }
+          /
+        }
+        <span>{{ algorithm.qualifiedName | shortName }}</span>
+        <ya-title-copy [text]="algorithm.qualifiedName" />
+      </ng-template>
+    </ya-instance-toolbar>
+
+    <ya-page-tabs>
+      <a
+        routerLink="-/summary"
+        routerLinkActive
+        #rla="routerLinkActive"
+        [class.active]="rla.isActive"
+        [queryParams]="{ c: yamcs.context }">
+        Summary
+      </a>
+      <a
+        routerLink="-/trace"
+        routerLinkActive
+        #rlb="routerLinkActive"
+        [class.active]="rlb.isActive"
+        [queryParams]="{ c: yamcs.context }"
+        [class.disabled]="algorithm.scope !== 'GLOBAL'">
+        Trace
+      </a>
+    </ya-page-tabs>
+
+    <div class="tab-content-wrapper">
+      <router-outlet />
+    </div>
+  </ya-instance-page>
+}

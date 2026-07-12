@@ -1,0 +1,5 @@
+wheel
+flask_cors
+flask
+flask_migrate
+scapy

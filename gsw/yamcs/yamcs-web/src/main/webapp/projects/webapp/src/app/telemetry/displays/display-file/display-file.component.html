@@ -1,0 +1,16 @@
+<ya-instance-page>
+  <ya-instance-toolbar>
+    <ng-template ya-instance-toolbar-label>
+      <ya-page-icon-button
+        [routerLink]="folderLink"
+        [queryParams]="{ c: yamcs.context }"
+        icon="arrow_back" />
+      {{ filename }}
+    </ng-template>
+    <ng-template app-viewer-controls-host />
+  </ya-instance-toolbar>
+
+  <div #viewerContainer style="height: 100%; width: 100%">
+    <ng-template app-viewer-host />
+  </div>
+</ya-instance-page>

@@ -1,0 +1,36 @@
+<ya-field [label]="label" [class.error]="err.invalid$ | async">
+  @if (type.rangeMin !== undefined || type.rangeMax !== undefined) {
+    <ya-meta>
+      <ya-interval [left]="type.rangeMin" [right]="type.rangeMax" />
+    </ya-meta>
+  }
+  @if (type.unitSet) {
+    <ya-meta>
+      {{ type.unitSet | units }}
+    </ya-meta>
+  }
+  @if (type.signed === false) {
+    <ya-meta>unsigned</ya-meta>
+  }
+
+  <ya-meta>{{ type.engType }}</ya-meta>
+
+  @if (description) {
+    <ya-help>
+      {{ description }}
+    </ya-help>
+  }
+
+  <ya-errors #err [controlName]="controlName" />
+
+  <div class="radio-group" [formGroup]="formGroup">
+    <label class="radio" [class.checked]="formGroup.controls['enabled'].value === 'true'">
+      <input type="radio" formControlName="enabled" value="true" />
+      {{ type.oneStringValue }}
+    </label>
+    <label class="radio" [class.checked]="formGroup.controls['enabled'].value === 'false'">
+      <input type="radio" formControlName="enabled" value="false" />
+      {{ type.zeroStringValue }}
+    </label>
+  </div>
+</ya-field>

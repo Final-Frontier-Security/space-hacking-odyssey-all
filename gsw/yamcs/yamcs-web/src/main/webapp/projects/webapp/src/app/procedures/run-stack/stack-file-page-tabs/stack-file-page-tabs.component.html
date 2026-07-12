@@ -1,0 +1,29 @@
+<ya-page-tabs>
+  <a
+    [routerLink]="'/procedures/stacks/files/' + objectName()"
+    routerLinkActive
+    [routerLinkActiveOptions]="{ exact: true }"
+    #rla="routerLinkActive"
+    [class.active]="rla.isActive"
+    [queryParams]="{ c: yamcs.context }">
+    Steps
+  </a>
+  <a
+    [routerLink]="'/procedures/stacks/files/' + objectName() + '/-/log'"
+    routerLinkActive
+    #rlb="routerLinkActive"
+    [class.active]="rlb.isActive"
+    [queryParams]="{ c: yamcs.context }">
+    Log
+  </a>
+  <a
+    [routerLink]="'/procedures/stacks/files/' + objectName() + '/-/settings'"
+    routerLinkActive
+    #rlc="routerLinkActive"
+    [class.active]="rlc.isActive"
+    [queryParams]="{ c: yamcs.context }">
+    Settings
+  </a>
+
+  <ng-container actions><ng-content /></ng-container>
+</ya-page-tabs>

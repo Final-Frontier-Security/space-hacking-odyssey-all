@@ -1,0 +1,184 @@
+<ya-message-bar #messageBar />
+
+<app-appbase-toolbar label="Instances">
+  @if (isCreateInstanceEnabled()) {
+    <ya-page-button routerLink="create-instance" icon="add_box">Create instance</ya-page-button>
+  }
+  @if (mayControlServices()) {
+    <ya-page-button
+      [disabled]="!isGroupStartEnabled()"
+      (clicked)="startSelectedInstances()"
+      icon="play_arrow">
+      Start
+    </ya-page-button>
+  }
+  @if (mayControlServices()) {
+    <ya-page-button
+      [disabled]="!isGroupStopEnabled()"
+      (clicked)="stopSelectedInstances()"
+      icon="stop">
+      Stop
+    </ya-page-button>
+  }
+  @if (mayControlServices()) {
+    <ya-page-button
+      [disabled]="!isGroupRestartEnabled()"
+      (clicked)="restartSelectedInstances()"
+      icon="sync_problem">
+      Restart
+    </ya-page-button>
+  }
+</app-appbase-toolbar>
+
+<ya-panel>
+  <ya-filter-bar>
+    <ya-search-filter
+      [formControl]="filterControl"
+      placeholder="Filter instances"
+      (onArrowDown)="selectNext()"
+      (onArrowUp)="selectPrevious()"
+      (onEnter)="applySelection()" />
+  </ya-filter-bar>
+
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    class="ya-data-table expand"
+    matSort
+    matSortActive="name"
+    matSortDirection="asc"
+    matSortDisableClear>
+    <ng-container cdkColumnDef="select">
+      <th
+        mat-header-cell
+        *cdkHeaderCellDef
+        class="checkbox"
+        (click)="cb.toggle(); $event.stopPropagation()">
+        <ya-table-checkbox #cb [dataSource]="dataSource" [selection]="selection" />
+      </th>
+      <td
+        mat-cell
+        *cdkCellDef="let item"
+        class="checkbox"
+        (click)="cb.toggle(); $event.stopPropagation()">
+        <ya-table-checkbox #cb [dataSource]="dataSource" [selection]="selection" [item]="item" />
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef class="status"></th>
+      <td mat-cell *matCellDef="let row" class="status">
+        @if (row.state === "INITIALIZED") {
+          <mat-icon class="warning" [matTooltip]="row.state">adjust</mat-icon>
+        }
+        @if (row.state === "RUNNING") {
+          <mat-icon class="success" [matTooltip]="row.state">check_circle</mat-icon>
+        }
+        @if (row.state === "FAILED") {
+          <mat-icon class="failed" [matTooltip]="row.state">highlight_off</mat-icon>
+        }
+        @if (row.state === "OFFLINE") {
+          <mat-icon class="offline" [matTooltip]="row.state">lens</mat-icon>
+        }
+        @if (row.state === "INITIALIZING" || row.state === "STARTING" || row.state === "STOPPING") {
+          <mat-icon class="spin" [matTooltip]="row.state">cached</mat-icon>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="name">
+      <th mat-header-cell *cdkHeaderCellDef mat-sort-header>Instance</th>
+      <td mat-cell *cdkCellDef="let row">
+        @if (row.state !== "OFFLINE") {
+          <a
+            routerLink="/instance"
+            [queryParams]="{
+              c: row.processors?.length ? row.name + '__' + (row | defaultProcessor) : row.name,
+            }"
+            (click)="$event.stopPropagation()">
+            <ya-highlight [text]="row.name" [term]="filterControl.value" />
+          </a>
+        }
+        @if (row.state === "OFFLINE") {
+          <span>{{ row.name }}</span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="processor">
+      <th mat-header-cell *cdkHeaderCellDef mat-sort-header>Default processor</th>
+      <td mat-cell *cdkCellDef="let row">
+        {{ row | defaultProcessor | nvl: "-" }}
+      </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="labels">
+      <th mat-header-cell *cdkHeaderCellDef mat-sort-header>Labels</th>
+      <td mat-cell *cdkCellDef="let row">
+        <ya-labels [dict]="row.labels" />
+        @if (!row.labels) {
+          -
+        }
+      </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="template">
+      <th mat-header-cell *cdkHeaderCellDef mat-sort-header>Template</th>
+      <td mat-cell *cdkCellDef="let row">
+        {{ row.template || "-" }}
+        @if (row.templateChanged) {
+          <mat-icon matTooltip="Template has changed">warning_amber</mat-icon>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container cdkColumnDef="state">
+      <th mat-header-cell *cdkHeaderCellDef mat-sort-header>State</th>
+      <td mat-cell *cdkCellDef="let row">
+        {{ row.state }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef class="expand"></th>
+      <td mat-cell *matCellDef="let instance">
+        @if (mayControlServices()) {
+          <ya-more>
+            <button
+              mat-menu-item
+              (click)="startInstance(instance)"
+              [disabled]="instance.state !== 'OFFLINE'">
+              Start
+            </button>
+            <button
+              mat-menu-item
+              (click)="stopInstance(instance)"
+              [disabled]="instance.state === 'OFFLINE'">
+              Stop
+            </button>
+            <button
+              mat-menu-item
+              (click)="restartInstance(instance)"
+              [disabled]="instance.state === 'OFFLINE'">
+              Restart
+            </button>
+          </ya-more>
+        }
+        @if (instance.failureCause; as failureCause) {
+          <span class="alert">
+            {{ failureCause }}
+          </span>
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *cdkHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *cdkRowDef="let row; columns: displayedColumns"
+      [class.selected]="selection.isSelected(row)"
+      (click)="toggleOne(row)"></tr>
+  </table>
+
+  <mat-paginator [pageSize]="100" [hidePageSize]="true" [showFirstLastButtons]="true" />
+</ya-panel>

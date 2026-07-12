@@ -1,0 +1,22 @@
+@if (container$ | async; as container) {
+  <ya-instance-page>
+    <ya-instance-toolbar>
+      <ng-template ya-instance-toolbar-label>
+        @if (container.qualifiedName | spaceSystemName; as spaceSystemName) {
+          <a
+            routerLink="/mdb/containers"
+            [queryParams]="{ c: yamcs.context, filter: spaceSystemName }"
+            class="ya-link ya-header-link">
+            {{ spaceSystemName }}
+          </a>
+          /{{ container.qualifiedName | shortName }}
+          <ya-title-copy [text]="container.qualifiedName" />
+        }
+      </ng-template>
+    </ya-instance-toolbar>
+
+    <ya-panel>
+      <app-container-detail [container]="container" />
+    </ya-panel>
+  </ya-instance-page>
+}

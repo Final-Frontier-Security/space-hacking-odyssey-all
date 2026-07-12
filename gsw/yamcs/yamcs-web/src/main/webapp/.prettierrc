@@ -1,0 +1,25 @@
+{
+  "overrides": [
+    {
+      "files": "*.html",
+      "options": {
+        "parser": "angular",
+        "bracketSameLine": true,
+        "printWidth": 100,
+        "htmlWhitespaceSensitivity": "ignore"
+      }
+    },
+    {
+      "files": "*.js",
+      "options": {
+        "singleQuote": true
+      }
+    },
+    {
+      "files": "*.ts",
+      "options": {
+        "singleQuote": true
+      }
+    }
+  ]
+}

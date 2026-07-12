@@ -1,0 +1,123 @@
+<ya-detail-pane>
+  @if (table.selectedValue | async; as pval) {
+    <ya-detail-toolbar>Value detail</ya-detail-toolbar>
+
+    <ya-attr-list style="padding: 0 16px">
+      <ya-attr label="Severity">
+        @if (pval.monitoringResult) {
+          <app-alarm-level [level]="pval.monitoringResult" />
+        } @else {
+          <span>-</span>
+        }
+      </ya-attr>
+
+      <ya-attr label="Generation time">
+        {{ pval.generationTime | datetime }}
+      </ya-attr>
+
+      <ya-attr label="Valid for">
+        {{ (pval.expireMillis | millisDuration) || "-" }}
+      </ya-attr>
+
+      <ya-attr>
+        <ng-template ya-attr-label>
+          Raw value
+          <ng-container
+            *ngTemplateOutlet="valueActionsTemplate; context: { value: pval.rawValue }" />
+        </ng-template>
+        @if (pval.rawValue) {
+          <ya-meta>
+            {{ pval.rawValue.type | lowercase }}
+          </ya-meta>
+        }
+        <ng-container *ngTemplateOutlet="valueTemplate; context: { value: pval.rawValue }" />
+      </ya-attr>
+
+      <ya-attr>
+        <ng-template ya-attr-label>
+          Engineering value
+          <ng-container
+            *ngTemplateOutlet="valueActionsTemplate; context: { value: pval.engValue }" />
+        </ng-template>
+        @if (pval.engValue) {
+          <ya-meta>
+            {{ pval.engValue.type | lowercase }}
+          </ya-meta>
+        }
+        <ng-container *ngTemplateOutlet="valueTemplate; context: { value: pval.engValue }" />
+      </ya-attr>
+
+      <ya-attr label="Range condition">
+        {{ pval.rangeCondition || "-" }}
+      </ya-attr>
+
+      <ya-attr label="Acquisition status">
+        {{ pval.acquisitionStatus || "-" }}
+      </ya-attr>
+    </ya-attr-list>
+  } @else {
+    <ya-detail-toolbar>Select a value</ya-detail-toolbar>
+  }
+</ya-detail-pane>
+
+<div class="table-wrapper">
+  <ya-panel>
+    <ya-filter-bar [formGroup]="filterForm">
+      <ya-select icon="access_time" formControlName="interval" [options]="intervalOptions" />
+
+      @if (filterForm.value["interval"] === "CUSTOM") {
+        <ya-date-time-input formControlName="customStart" />
+        <ya-date-time-input formControlName="customStop" />
+        <ya-button (click)="applyCustomDates()" [disabled]="filterForm.invalid">Apply</ya-button>
+      } @else {
+        <ya-button (click)="jumpToNow()">Jump to now</ya-button>
+      }
+
+      @if (dataSource.loading$ | async) {
+        <ya-dots />
+      }
+    </ya-filter-bar>
+
+    <ya-table-window [duration]="appliedInterval" [start]="validStart" [stop]="validStop">
+      <ya-button appearance="text" (click)="exportParameterData()" icon="download">
+        Export CSV
+      </ya-button>
+    </ya-table-window>
+
+    <app-parameter-values-table #table [dataSource]="dataSource" />
+
+    @if (dataSource.isEmpty()) {
+      <ya-empty-message>
+        No records found matching current filter in the selected time range.
+      </ya-empty-message>
+    }
+
+    @if (!(dataSource.loading$ | async) && !dataSource.isEmpty()) {
+      <ya-toolbar appearance="bottom" align="center">
+        <ya-button [disabled]="!dataSource.hasMore()" (click)="loadMoreData()">Load more</ya-button>
+      </ya-toolbar>
+    }
+  </ya-panel>
+</div>
+
+<ng-template #valueActionsTemplate let-value="value">
+  @switch (value?.type) {
+    @case ("BINARY") {
+      <ya-more icon="more_horiz">
+        <button mat-menu-item (click)="copyHex(value.binaryValue)">Copy hex</button>
+        <button mat-menu-item (click)="copyBinary(value.binaryValue)">Copy binary</button>
+      </ya-more>
+    }
+  }
+</ng-template>
+
+<ng-template #valueTemplate let-value="value">
+  @switch (value?.type) {
+    @case ("BINARY") {
+      <app-hex [base64String]="value.binaryValue" />
+    }
+    @default {
+      <ya-value [value]="value" />
+    }
+  }
+</ng-template>

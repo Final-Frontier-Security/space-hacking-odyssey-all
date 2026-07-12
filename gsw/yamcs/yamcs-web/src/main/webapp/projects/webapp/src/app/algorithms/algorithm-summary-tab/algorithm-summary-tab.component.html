@@ -1,0 +1,5 @@
+<ya-panel>
+  @if (algorithm$ | async; as algorithm) {
+    <app-algorithm-detail [algorithm]="algorithm" [status]="status$ | async" />
+  }
+</ya-panel>

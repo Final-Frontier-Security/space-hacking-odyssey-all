@@ -1,0 +1,10 @@
+@switch (command.transmissionConstraints?.status) {
+  @case ("PENDING") {
+    <mat-icon class="pending icon16 spin" matTooltip="Checking transmission constraints">
+      cached
+    </mat-icon>
+  }
+  @default {
+    <mat-icon class="not-pending icon16">lens</mat-icon>
+  }
+}

@@ -1,0 +1,20 @@
+<ya-field [label]="label" [class.error]="err.invalid$ | async">
+  @if (type.minBytes !== undefined || type.maxBytes !== undefined) {
+    <ya-meta>
+      bytes:
+      <ya-interval [left]="type.minBytes" [right]="type.maxBytes" [singleValueIfEqual]="true" />
+    </ya-meta>
+  }
+
+  <ya-meta>{{ type.engType }}</ya-meta>
+
+  @if (description) {
+    <ya-help>
+      {{ description }}
+    </ya-help>
+  }
+
+  <ya-errors #err [controlName]="controlName" />
+
+  <ya-binary-input [formControl]="formControl" />
+</ya-field>

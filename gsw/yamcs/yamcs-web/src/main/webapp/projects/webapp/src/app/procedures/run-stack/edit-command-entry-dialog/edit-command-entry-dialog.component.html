@@ -1,0 +1,57 @@
+@if (!(selectedCommand$ | async)) {
+  <div class="wrapper">
+    <form [formGroup]="selectCommandForm" class="ya-form">
+      <h2>Select command</h2>
+      <div class="command-table-wrapper">
+        <app-command-selector #commandSelector formControlName="command" />
+      </div>
+    </form>
+  </div>
+  <div class="footer">
+    <mat-toolbar>
+      <mat-toolbar-row>
+        <ya-button mat-dialog-close>CANCEL</ya-button>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  </div>
+}
+
+@if (selectedCommand$ | async; as command) {
+  <div class="wrapper">
+    <div class="command-detail">
+      <div class="names" style="margin-bottom: 0.5em">
+        <div>
+          @if (command.qualifiedName | spaceSystemName; as spaceSystem) {
+            <ya-text-action [padding]="false" (click)="returnToList(spaceSystem)">
+              {{ spaceSystem }}
+            </ya-text-action>
+          }
+          <h2>{{ command.name }}</h2>
+        </div>
+        @for (alias of command.alias || []; track alias) {
+          <div>
+            {{ alias.namespace }}
+            <br />
+            <h2>{{ alias.name }}</h2>
+          </div>
+        }
+      </div>
+      <app-command-form
+        #commandForm
+        [command]="command"
+        [templateProvider]="templateProvider"
+        [stackMode]="true" />
+    </div>
+  </div>
+  <div class="footer">
+    <mat-toolbar>
+      <mat-toolbar-row>
+        <ya-button mat-dialog-close>CANCEL</ya-button>
+        &nbsp;&nbsp;
+        <ya-button appearance="primary" (click)="handleOK()" [disabled]="!commandForm.form.valid">
+          {{ okLabel }}
+        </ya-button>
+      </mat-toolbar-row>
+    </mat-toolbar>
+  </div>
+}

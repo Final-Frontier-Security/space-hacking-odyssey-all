@@ -1,0 +1,21 @@
+<ya-page-tabs>
+  <a
+    routerLink="/commanding/clearances"
+    routerLinkActive
+    [routerLinkActiveOptions]="{ matrixParams: 'exact', paths: 'exact', queryParams: 'ignored' }"
+    #rla="routerLinkActive"
+    [class.active]="rla.isActive"
+    [queryParams]="{ c: yamcs.context }">
+    Clearances
+  </a>
+  <a
+    routerLink="/commanding/clearances/log"
+    routerLinkActive
+    #rlb="routerLinkActive"
+    [class.active]="rlb.isActive"
+    [queryParams]="{ c: yamcs.context }">
+    Action log
+  </a>
+
+  <ng-container actions><ng-content /></ng-container>
+</ya-page-tabs>

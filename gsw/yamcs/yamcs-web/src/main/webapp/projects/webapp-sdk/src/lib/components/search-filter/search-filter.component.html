@@ -1,0 +1,16 @@
+<div class="search-input" [style.width]="width">
+  <input
+    #input
+    class="ya-input"
+    type="text"
+    [placeholder]="placeholder"
+    (keydown)="onKeydown($event)" />
+  <div class="filter">
+    <mat-icon>{{ icon }}</mat-icon>
+  </div>
+  @if (showClear$ | async) {
+    <div class="clear" (click)="clearInput()">
+      <mat-icon>close</mat-icon>
+    </div>
+  }
+</div>

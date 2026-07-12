@@ -1,0 +1,340 @@
+@if (offset) {
+  <dl class="dl-horizontal no-lead no-trail">
+    <dt>Entry</dt>
+    <dd>{{ parameter.qualifiedName | shortName }}{{ offset }}</dd>
+
+    <dt>System</dt>
+    <dd>
+      @if (parameter.qualifiedName | spaceSystemName; as spaceSystemName) {
+        <a
+          routerLink="/telemetry/parameters"
+          [queryParams]="{ c: yamcs.context, system: spaceSystemName }"
+          class="ya-link">
+          {{ spaceSystemName }}
+        </a>
+      }
+    </dd>
+
+    @for (alias of (entry$ | async)?.alias; track alias) {
+      <dt>{{ alias.namespace }}</dt>
+      <dd>{{ alias.name }}</dd>
+    }
+
+    <dt>Type</dt>
+    <dd>
+      @if ((ptype$ | async)?.engType; as engType) {
+        <span class="mono">
+          {{ engType }}
+        </span>
+      } @else {
+        -
+      }
+    </dd>
+
+    @if (ptype$ | async; as ptype) {
+      @if (ptype.signed !== undefined) {
+        <dt>Signed</dt>
+        <dd>{{ ptype.signed }}</dd>
+      }
+      @if (ptype.sizeInBits !== undefined) {
+        <dt>Size in bits</dt>
+        <dd>{{ ptype.sizeInBits }}</dd>
+      }
+    }
+
+    <dt>Source</dt>
+    <dd>{{ (parameter.dataSource | titlecase) || "-" }}</dd>
+
+    @if (entry$ | async; as entry) {
+      @if (entry.longDescription) {
+        <dt>Description</dt>
+        <dd>
+          <app-markdown [text]="entry.longDescription" />
+        </dd>
+      }
+      @if (!entry.longDescription) {
+        <dt>Description</dt>
+        <dd>
+          {{ entry.shortDescription || "-" }}
+        </dd>
+      }
+    } @else {
+      -
+    }
+  </dl>
+}
+
+<dl class="dl-horizontal no-trail" [class.no-lead]="!offset">
+  @if (offset) {
+    <dt>Host Parameter</dt>
+    <dd>
+      <a
+        [routerLink]="'/telemetry/parameters' + parameter.qualifiedName"
+        [queryParams]="{ c: yamcs.context }"
+        class="ya-link">
+        {{ parameter.qualifiedName | shortName }}
+      </a>
+    </dd>
+  }
+
+  @if (!offset) {
+    <dt>Parameter</dt>
+    <dd>{{ parameter.qualifiedName | shortName }}</dd>
+  }
+
+  @if (!offset) {
+    <dt>System</dt>
+    <dd>
+      @if (parameter.qualifiedName | spaceSystemName; as spaceSystemName) {
+        <a
+          routerLink="/telemetry/parameters"
+          [queryParams]="{ c: yamcs.context, system: spaceSystemName }"
+          class="ya-link">
+          {{ spaceSystemName }}
+        </a>
+      }
+    </dd>
+  }
+
+  @for (alias of parameter.alias; track alias) {
+    <dt>{{ alias.namespace }}</dt>
+    <dd>{{ alias.name }}</dd>
+  }
+
+  <dt>Type</dt>
+  <dd>
+    @if (parameter.type?.engType; as engType) {
+      <span class="mono">
+        {{ engType }}
+      </span>
+    } @else {
+      -
+    }
+  </dd>
+
+  @if (parameter.type?.signed !== undefined) {
+    <dt>Signed</dt>
+    <dd>{{ parameter.type?.signed }}</dd>
+  }
+
+  @if (!offset) {
+    <dt>Source</dt>
+    <dd>{{ (parameter.dataSource | titlecase) || "-" }}</dd>
+  }
+
+  @if (parameter.longDescription) {
+    <dt>Description</dt>
+    <dd>
+      <app-markdown [text]="parameter.longDescription" />
+    </dd>
+  }
+  @if (!parameter.longDescription) {
+    <dt>Description</dt>
+    <dd>
+      {{ parameter.shortDescription || "-" }}
+    </dd>
+  }
+</dl>
+
+<div class="section-divider">
+  <mat-divider />
+</div>
+<h4>Current value</h4>
+@if (pval?.engValue; as value) {
+  @switch (value.type) {
+    @case ("AGGREGATE") {
+      <table yaDataTable>
+        <tr>
+          <th>Member</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Value</th>
+        </tr>
+        @for (name of value.aggregateValue!.name; track name; let i = $index) {
+          <tr>
+            @if ((offset || "") + "." + name; as memberOffset) {
+              <td>
+                <a
+                  [routerLink]="'/telemetry/parameters' + parameter.qualifiedName + memberOffset"
+                  [queryParams]="{ c: yamcs.context }">
+                  {{ name }}
+                </a>
+              </td>
+              <td>
+                @if ((parameter | entryForOffset: memberOffset)?.type?.engType; as engType) {
+                  <span class="mono">
+                    {{ engType }}
+                  </span>
+                } @else {
+                  -
+                }
+              </td>
+              <td>{{ (parameter | entryForOffset: memberOffset)?.shortDescription || "-" }}</td>
+              <td>
+                <ya-expirable [pval]="pval">
+                  {{ value.aggregateValue!.value[i] | value }}
+                  @if ((parameter | entryForOffset: memberOffset)?.type?.unitSet; as unitSet) {
+                    {{ unitSet | units }}
+                  }
+                </ya-expirable>
+              </td>
+            }
+          </tr>
+        }
+      </table>
+    }
+    @case ("ARRAY") {
+      <table yaDataTable>
+        <tr>
+          <th>Index</th>
+          <th>Value</th>
+        </tr>
+        @for (element of value.arrayValue || []; track element; let i = $index) {
+          <tr>
+            <td>
+              <a
+                [routerLink]="
+                  '/telemetry/parameters' + parameter.qualifiedName + (offset || '') + '[' + i + ']'
+                "
+                [queryParams]="{ c: yamcs.context }">
+                {{ i }}
+              </a>
+            </td>
+            <td>{{ element | value }}</td>
+          </tr>
+        }
+      </table>
+    }
+    @default {
+      <span class="pval">
+        <ya-expirable [pval]="pval" style="white-space: nowrap">
+          @if (pval?.monitoringResult) {
+            <app-alarm-level [level]="pval?.monitoringResult" />
+            &nbsp;
+          }
+          {{ value | value }}
+          @if ((parameter | parameterTypeForPath)?.unitSet; as unitSet) {
+            {{ unitSet | units }}
+          }
+        </ya-expirable>
+      </span>
+      <br />
+      <div class="meter-size-constrainer">
+        @if (pval?.monitoringResult && pval?.alarmRange) {
+          <app-severity-meter [pval]="pval" />
+        }
+      </div>
+      <dl class="dl-horizontal">
+        <dt>Generation time</dt>
+        <dd>{{ pval?.generationTime | datetime }}</dd>
+        <dt>Status</dt>
+        <dd>{{ pval?.acquisitionStatus || "-" }}</dd>
+        <dt>Raw value</dt>
+        <dd>{{ (pval?.rawValue | value) ?? "-" }}</dd>
+      </dl>
+    }
+  }
+}
+@if (!pval?.engValue) {
+  <span style="white-space: nowrap">---</span>
+}
+
+@if (entry$ | async; as entry) {
+  @if (entry.type?.engType === "enumeration") {
+    <div class="section-divider">
+      <mat-divider />
+    </div>
+
+    <h4>Enumeration</h4>
+    <table yaDataTable>
+      <tr>
+        <th style="width: 50px">Value</th>
+        <th style="width: 100px">Label</th>
+        <th style="width: 300px">Description</th>
+        <th>Alarm level (default)</th>
+        @for (contextAlarm of entry.type?.contextAlarm; track contextAlarm) {
+          <th>
+            <app-expression
+              [expression]="contextAlarm.context"
+              [relto]="parameter.qualifiedName | spaceSystemName" />
+          </th>
+        }
+      </tr>
+      @for (enumValue of entry.type!.enumValues; track enumValue) {
+        <tr>
+          <td style="white-space: nowrap">{{ enumValue.value }}</td>
+          <td style="white-space: nowrap">{{ enumValue.label }}</td>
+          <td>{{ enumValue.description || "-" }}</td>
+          <td>
+            @if (getDefaultAlarmLevel(entry.type!, enumValue.label); as level) {
+              <app-alarm-level [level]="level" [grayscale]="true" />
+              {{ level }}
+            } @else {
+              <span>-</span>
+            }
+          </td>
+          @for (contextAlarm of entry.type!.contextAlarm; track contextAlarm) {
+            <td>
+              @if (getEnumerationAlarmLevel(contextAlarm, enumValue.label); as level) {
+                <app-alarm-level [level]="level" [grayscale]="true" />
+                {{ level }}
+              } @else {
+                <span>-</span>
+              }
+            </td>
+          }
+        </tr>
+      }
+      @for (enumRange of entry.type!.enumRanges; track enumRange) {
+        <tr>
+          <td style="white-space: nowrap">
+            <ya-interval
+              [left]="enumRange.min"
+              [right]="enumRange.max"
+              [leftInclusive]="enumRange.minInclusive"
+              [rightInclusive]="enumRange.maxInclusive" />
+          </td>
+          <td style="white-space: nowrap">{{ enumRange.label }}</td>
+          <td>{{ enumRange.description || "-" }}</td>
+          <td>
+            @if (getDefaultAlarmLevel(entry.type!, enumRange.label); as level) {
+              <app-alarm-level [level]="level" [grayscale]="true" />
+              {{ level }}
+            } @else {
+              <span>-</span>
+            }
+          </td>
+          @for (context of entry.type!.contextAlarm; track context) {
+            <td>
+              @if (getEnumerationAlarmLevel(context, enumRange.label); as level) {
+                <app-alarm-level [level]="level" [grayscale]="true" />
+                {{ level }}
+              } @else {
+                <span>-</span>
+              }
+            </td>
+          }
+        </tr>
+      }
+      <tr>
+        <td>Other</td>
+        <td>UNDEF</td>
+        <td>-</td>
+        <td>
+          @if (entry.type!.defaultAlarm?.defaultLevel; as level) {
+            <app-alarm-level [level]="level" [grayscale]="true" />
+            {{ level }}
+          }
+        </td>
+        @for (context of entry.type!.contextAlarm; track context) {
+          <td>
+            @if (context.alarm.defaultLevel; as level) {
+              <app-alarm-level [level]="level" [grayscale]="true" />
+              {{ level }}
+            }
+          </td>
+        }
+      </tr>
+    </table>
+  }
+}

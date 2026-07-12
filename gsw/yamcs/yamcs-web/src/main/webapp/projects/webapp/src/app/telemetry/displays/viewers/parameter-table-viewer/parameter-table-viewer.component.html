@@ -1,0 +1,55 @@
+@if (model$ | async; as model) {
+  <ya-panel>
+    @if (model.parameters.length) {
+      @if (model.scroll) {
+        <app-scrolling-parameter-table
+          [model]="model"
+          [buffer]="buffer"
+          [paused]="paused$ | async"
+          [showActions]="showActions$ | async"
+          (moveLeft)="moveUp($event)"
+          (moveRight)="moveDown($event)"
+          (removeColumn)="removeParameter($event)"
+          (bufferSize)="setBufferSize($event)" />
+      } @else {
+        <app-multiple-parameter-table
+          [model]="model"
+          [buffer]="buffer"
+          [paused]="paused$ | async"
+          [showActions]="showActions$ | async"
+          [selection]="selection"
+          (moveUp)="moveUp($event)"
+          (moveDown)="moveDown($event)" />
+      }
+    } @else {
+      <ya-empty-message>
+        <div style="text-align: left">
+          <p>
+            This file is empty.
+            <br />
+            Start by
+            <a class="ya-link" style="cursor: pointer" (click)="showAddParameterDialog()">
+              adding a parameter
+            </a>
+            .
+          </p>
+        </div>
+      </ya-empty-message>
+    }
+    <ng-template #empty>
+      <ya-empty-message>
+        <div style="text-align: left">
+          <p>
+            This file is empty.
+            <br />
+            Start by
+            <a class="ya-link" style="cursor: pointer" (click)="showAddParameterDialog()">
+              adding a parameter
+            </a>
+            .
+          </p>
+        </div>
+      </ya-empty-message>
+    </ng-template>
+  </ya-panel>
+}

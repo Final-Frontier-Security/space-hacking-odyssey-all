@@ -1,0 +1,51 @@
+@if (table$ | async; as table) {
+  <ya-detail-pane>
+    @if (selectedRecord$ | async; as selectedRecord) {
+      <ya-detail-toolbar>Record</ya-detail-toolbar>
+      <div style="padding: 0 16px 16px 16px">
+        <app-record [table]="table" [record]="selectedRecord" />
+      </div>
+    } @else {
+      <ya-detail-toolbar>Select a record</ya-detail-toolbar>
+    }
+  </ya-detail-pane>
+
+  <div class="data-table-wrapper">
+    <ya-panel>
+      @if (records$ | async; as records) {
+        @if (records.length) {
+          <table yaDataTable>
+            <tr>
+              @for (column of table.keyColumn; track column) {
+                <th>{{ column.name }}</th>
+              }
+              @for (column of table.valueColumn; track column) {
+                <th>{{ column.name }}</th>
+              }
+            </tr>
+            @for (record of records; track record) {
+              <tr
+                [ngClass]="{ selected: record === (selectedRecord$ | async) }"
+                (click)="selectRecord(record)">
+                @for (column of table.keyColumn; track column) {
+                  <td>
+                    {{ (record.column | columnValue: column.name | value) || "-" }}
+                  </td>
+                }
+                @for (column of table.valueColumn; track column) {
+                  <td [class.mono]="column.type === 'BINARY'">
+                    {{ (record.column | columnValue: column.name | value) || "-" }}
+                  </td>
+                }
+              </tr>
+            }
+          </table>
+        } @else {
+          <ya-empty-message>Empty table.</ya-empty-message>
+        }
+      } @else {
+        <ya-empty-message>Empty table.</ya-empty-message>
+      }
+    </ya-panel>
+  </div>
+}

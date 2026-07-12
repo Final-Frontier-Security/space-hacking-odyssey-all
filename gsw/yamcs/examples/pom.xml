@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.yamcs</groupId>
+    <artifactId>yamcs</artifactId>
+    <version>5.12.1-SNAPSHOT</version>
+  </parent>
+
+  <groupId>org.yamcs.examples</groupId>
+  <artifactId>examples</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Yamcs :: Examples</name>
+  <description>
+    A collection of practical examples on how to use Yamcs.
+  </description>
+
+  <properties>
+    <maven.install.skip>true</maven.install.skip>
+    <maven.deploy.skip>true</maven.deploy.skip>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+    <maven.source.skip>true</maven.source.skip>
+    <gpg.skip>true</gpg.skip>
+    <javaModuleName>org.yamcs.examples</javaModuleName>
+  </properties>
+
+  <modules>
+    <module>cascading</module>
+    <module>ccsds-frames</module>
+    <module>cfdp</module>
+    <module>cfdp-udp</module>
+    <module>perftest1</module>
+    <module>perftest2</module>
+    <module>pus</module>
+    <module>replication1</module>
+    <module>replication2</module>
+    <module>replication3</module>
+    <module>simulation</module>
+    <module>snippets</module>
+    <module>templates</module>
+  </modules>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <configuration>
+            <!-- central-publishing-maven-plugin, and
+                 yamcs-maven-plugin bundle goal
+                 require an artifact -->
+            <skipIfEmpty>false</skipIfEmpty>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.yamcs</groupId>
+          <artifactId>yamcs-maven-plugin</artifactId>
+          <configuration>
+            <!--  Hook the webapp sources directly to the output of npm. This
+                  allows running npm in watch mode without restarting Yamcs. -->
+            <jvmArgs>
+              <jvmArg>-Dyamcs.web.staticRoot=../../../../yamcs-web/src/main/webapp/dist/webapp</jvmArg>
+            </jvmArgs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.sonatype.central</groupId>
+          <artifactId>central-publishing-maven-plugin</artifactId>
+          <configuration>
+            <!-- Seems to get ignored? -->
+            <skipPublishing>true</skipPublishing>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>bundle-examples</id>
+      <activation>
+        <property>
+          <name>bundle-examples</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.yamcs</groupId>
+            <artifactId>yamcs-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>bundle-yamcs</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>bundle</goal>
+                </goals>
+                <configuration>
+                  <classifier>bundle</classifier>
+                  <attach>false</attach>
+                  <includeDefaultWrappers>true</includeDefaultWrappers>
+                  <scope>compile</scope>
+                  <formats>
+                    <format>tar.gz</format>
+                  </formats>
+                </configuration>
+              </execution>
+              <execution>
+                <id>bundle-dropin</id>
+                <phase>package</phase>
+                <goals>
+                  <goal>bundle</goal>
+                </goals>
+                <configuration>
+                  <classifier>dropin</classifier>
+                  <attach>false</attach>
+                  <includeDefaultWrappers>false</includeDefaultWrappers>
+                  <scope>runtime</scope>
+                  <formats>
+                    <format>tar.gz</format>
+                  </formats>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>

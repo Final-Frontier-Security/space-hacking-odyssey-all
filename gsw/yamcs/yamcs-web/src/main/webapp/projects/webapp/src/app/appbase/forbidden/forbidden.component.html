@@ -1,0 +1,23 @@
+<ya-panel>
+  <p>&nbsp;</p>
+  <table style="padding-left: 60px; margin: 0 auto; padding-top: 100px">
+    <tr>
+      <td style="vertical-align: top">
+        <h2>403: Forbidden</h2>
+        <p>
+          You do not have sufficient privileges to access
+          @if (page) {
+            <a [href]="page" class="ya-link">{{ page }}</a>
+          }
+          @if (!page) {
+            this page
+          }
+        </p>
+        <a routerLink="/" class="ya-link">Go to homepage</a>
+      </td>
+      <td style="padding-left: 15em; padding-right: 5em">
+        <app-oops />
+      </td>
+    </tr>
+  </table>
+</ya-panel>

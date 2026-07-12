@@ -1,0 +1,37 @@
+<div class="central-pane">
+  @if (data.band; as band) {
+    <div class="ya-form" style="max-width: 600px">
+      <h2>Edit band</h2>
+      <form [formGroup]="form" novalidate autocomplete="off">
+        @if (band.type === "ITEM_BAND") {
+          <app-edit-item-band [form]="form" [band]="band" />
+        } @else if (band.type === "SPACER") {
+          <app-edit-spacer [form]="form" [band]="band" />
+        } @else if (band.type === "TIME_RULER") {
+          <app-edit-time-ruler [form]="form" [band]="band" />
+        } @else if (band.type === "COMMAND_BAND") {
+          <app-edit-command-band [form]="form" [band]="band" />
+        } @else if (band.type === "PARAMETER_PLOT") {
+          <app-edit-parameter-plot [form]="form" [band]="band" />
+        } @else if (band.type === "PARAMETER_STATES") {
+          <app-edit-parameter-states [form]="form" [band]="band" />
+        }
+      </form>
+    </div>
+  }
+</div>
+
+<div class="footer">
+  <mat-toolbar>
+    <mat-toolbar-row>
+      <ya-button mat-dialog-close>CANCEL</ya-button>
+      &nbsp;&nbsp;
+      <ya-button
+        appearance="primary"
+        [disabled]="!(dirty$ | async) || !form.valid"
+        (click)="doOnConfirm()">
+        SAVE CHANGES
+      </ya-button>
+    </mat-toolbar-row>
+  </mat-toolbar>
+</div>

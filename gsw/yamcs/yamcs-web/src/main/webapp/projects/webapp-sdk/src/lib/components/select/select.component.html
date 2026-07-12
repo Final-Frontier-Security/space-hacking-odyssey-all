@@ -1,0 +1,36 @@
+<ya-button [matMenuTriggerFor]="selMenu" [icon]="icon()" dropdown="true">
+  @if (label(); as label) {
+    {{ label }}
+  } @else {
+    <span style="color: grey">{{ emptyOption() }}</span>
+  }
+</ya-button>
+@if (showClear()) {
+  <ya-icon-action
+    icon="clear"
+    [padding]="true"
+    [disabled]="!label()"
+    (click)="clearValue()"
+    matTooltip="Clear value" />
+}
+
+<mat-menu #selMenu="matMenu" yPosition="below" class="ya-menu" [overlapTrigger]="false">
+  @for (option of options(); track option) {
+    @if (option.group) {
+      <mat-divider />
+    }
+    <button mat-menu-item (click)="writeValue(option.id)">
+      <mat-icon [style.visibility]="isSelected(option.id) ? 'visible' : 'hidden'">check</mat-icon>
+      {{ option.label }}
+    </button>
+  }
+  @for (option of optionChildren(); track option) {
+    @if (option.group()) {
+      <mat-divider />
+    }
+    <button mat-menu-item (click)="writeValue(option.id())">
+      <mat-icon [style.visibility]="isSelected(option.id()) ? 'visible' : 'hidden'">check</mat-icon>
+      {{ option.label() }}
+    </button>
+  }
+</mat-menu>

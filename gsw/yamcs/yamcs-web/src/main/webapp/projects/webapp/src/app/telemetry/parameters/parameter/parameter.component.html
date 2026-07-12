@@ -1,0 +1,78 @@
+@if (parameter$ | async; as parameter) {
+  <ya-instance-page>
+    <ya-instance-toolbar>
+      <ng-template ya-instance-toolbar-label>
+        @for (parent of parameter.qualifiedName | parents; track parent; let isFirst = $first) {
+          @if (!isFirst) {
+            <a
+              routerLink="/telemetry/parameters"
+              class="ya-link ya-header-link"
+              [queryParams]="{ c: yamcs.context, system: parent.path }">
+              {{ parent.name }}
+            </a>
+          }
+          /
+        }
+        <span>{{ parameter.qualifiedName | shortName }}{{ offset$ | async }}</span>
+        <ya-title-copy [text]="parameter.qualifiedName + ((offset$ | async) || '')" />
+      </ng-template>
+
+      @if (isWritable() && maySetParameter() && !(offset$ | async)) {
+        <ya-page-button (clicked)="setParameter()" icon="edit">Set value</ya-page-button>
+      }
+      @if (mayReadMissionDatabase()) {
+        <ya-page-button
+          [routerLink]="['/mdb/parameters', parameter.qualifiedName]"
+          [queryParams]="{ c: yamcs.context }"
+          icon="auto_stories">
+          View in MDB
+        </ya-page-button>
+      }
+    </ya-instance-toolbar>
+
+    <ya-page-tabs #tabs>
+      <a
+        routerLink="-/summary"
+        routerLinkActive
+        #rla="routerLinkActive"
+        [class.active]="rla.isActive"
+        [queryParams]="{ c: yamcs.context }">
+        Summary
+      </a>
+      @if (config.tmArchive) {
+        <a
+          routerLink="-/chart"
+          routerLinkActive
+          #rlb="routerLinkActive"
+          [class.active]="rlb.isActive"
+          [queryParams]="{ c: yamcs.context }">
+          Chart
+        </a>
+      }
+      @if (mayReadAlarms()) {
+        <a
+          routerLink="-/alarms"
+          routerLinkActive
+          #rlc="routerLinkActive"
+          [class.active]="rlc.isActive"
+          [queryParams]="{ c: yamcs.context }">
+          Alarm history
+        </a>
+      }
+      @if (config.tmArchive) {
+        <a
+          routerLink="-/data"
+          routerLinkActive
+          #rld="routerLinkActive"
+          [class.active]="rld.isActive"
+          [queryParams]="{ c: yamcs.context }">
+          Historical data
+        </a>
+      }
+    </ya-page-tabs>
+
+    <div class="tab-content-wrapper" [class.noscroll]="tabs.selectedIndex === 1">
+      <router-outlet />
+    </div>
+  </ya-instance-page>
+}

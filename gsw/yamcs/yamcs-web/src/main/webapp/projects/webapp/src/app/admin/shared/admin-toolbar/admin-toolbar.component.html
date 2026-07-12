@@ -1,0 +1,10 @@
+<div class="app-admin-toolbar-label">
+  @if (templateLabel) {
+    <ng-template [cdkPortalOutlet]="templateLabel" />
+  } @else {
+    {{ textLabel() }}
+  }
+</div>
+<div class="app-admin-toolbar-content">
+  <ng-content />
+</div>

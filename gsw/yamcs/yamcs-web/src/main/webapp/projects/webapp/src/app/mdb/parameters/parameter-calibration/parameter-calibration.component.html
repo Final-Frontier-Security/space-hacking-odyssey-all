@@ -1,0 +1,71 @@
+@if (ptype.dataEncoding?.defaultCalibrator || ptype.dataEncoding?.contextCalibrators) {
+  <table yaDataTable>
+    <tr>
+      <th width="200">Calibrator</th>
+      <th width="100">Type</th>
+      <th width="200">Definition</th>
+    </tr>
+    @if (ptype.dataEncoding?.defaultCalibrator; as defaultCalibrator) {
+      <tr>
+        <td>default</td>
+        <td>{{ defaultCalibrator.type }}</td>
+        <td>
+          @switch (defaultCalibrator.type) {
+            @case ("POLYNOMIAL") {
+              <span
+                [innerHTML]="
+                  defaultCalibrator.polynomialCalibrator.coefficients | polynomial
+                "></span>
+            }
+            @case ("SPLINE") {
+              <span>{{ defaultCalibrator.splineCalibrator.points.length }} points</span>
+            }
+            @case ("JAVA_EXPRESSION") {
+              <span>
+                {{ defaultCalibrator.javaExpressionCalibrator.formula }}
+              </span>
+            }
+            @default {
+              <span>-</span>
+            }
+          }
+        </td>
+      </tr>
+    }
+    @if (ptype.dataEncoding?.contextCalibrators; as contextCalibrators) {
+      @for (contextCalibrator of contextCalibrators; track contextCalibrator) {
+        <tr>
+          <td>
+            <app-expression [expression]="contextCalibrator.context" [relto]="relto" />
+          </td>
+          <td>{{ contextCalibrator.calibrator.type }}</td>
+          <td>
+            @switch (contextCalibrator.calibrator.type) {
+              @case ("POLYNOMIAL") {
+                <span
+                  [innerHTML]="
+                    contextCalibrator.calibrator.polynomialCalibrator.coefficients | polynomial
+                  "></span>
+              }
+              @case ("SPLINE") {
+                <span>
+                  {{ contextCalibrator.calibrator.splineCalibrator.points.length }} points
+                </span>
+              }
+              @case ("JAVA_EXPRESSION") {
+                <span>
+                  {{ contextCalibrator.calibrator.javaExpressionCalibrator.formula }}
+                </span>
+              }
+              @default {
+                <span>-</span>
+              }
+            }
+          </td>
+        </tr>
+      }
+    }
+  </table>
+} @else {
+  None
+}

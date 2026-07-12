@@ -1,0 +1,13 @@
+.title-copy {
+  margin-left: 10px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  font-size: 14px !important;
+  height: 14px !important;
+  width: 14px !important;
+}
+
+.title-copy:hover {
+  color: #1b61b9;
+}

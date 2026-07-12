@@ -1,0 +1,56 @@
+<h2 mat-dialog-title>Select enumeration state</h2>
+
+<mat-dialog-content>
+  <ya-filter-bar>
+    <ya-search-filter
+      [formControl]="filterControl"
+      width="100%"
+      (onArrowDown)="selectNext()"
+      (onArrowUp)="selectPrevious()"
+      (onEnter)="applySelection()"
+      style="flex: 1 1 auto" />
+  </ya-filter-bar>
+
+  <div class="scrollpane">
+    <table mat-table [dataSource]="dataSource" class="ya-data-table" style="width: 100%">
+      <ng-container cdkColumnDef="value">
+        <th mat-header-cell *cdkHeaderCellDef>Value</th>
+        <td mat-cell *cdkCellDef="let row">
+          {{ row.value }}
+        </td>
+      </ng-container>
+
+      <ng-container cdkColumnDef="name">
+        <th mat-header-cell *cdkHeaderCellDef>Label</th>
+        <td mat-cell *cdkCellDef="let row">
+          <strong>{{ row.label }}</strong>
+        </td>
+      </ng-container>
+
+      <ng-container cdkColumnDef="hex">
+        <th mat-header-cell *cdkHeaderCellDef>Hex value</th>
+        <td mat-cell *cdkCellDef="let row">
+          {{ toHex(row.value) }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *cdkHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *cdkRowDef="let row; columns: displayedColumns"
+        [class.selected]="selection.isSelected(row)"
+        (click)="selection.toggle(row)"></tr>
+    </table>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <mat-paginator [pageSize]="100" [hidePageSize]="true" [showFirstLastButtons]="true" />
+  <div style="flex: 1 1 auto"></div>
+
+  <ya-button mat-dialog-close>CANCEL</ya-button>
+
+  <ya-button appearance="primary" [disabled]="selection.isEmpty()" (click)="applySelection()">
+    SELECT
+  </ya-button>
+</mat-dialog-actions>

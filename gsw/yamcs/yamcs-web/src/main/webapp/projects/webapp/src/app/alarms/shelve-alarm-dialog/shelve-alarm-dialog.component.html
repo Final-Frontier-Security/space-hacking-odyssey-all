@@ -1,0 +1,29 @@
+<h2 mat-dialog-title>Shelve</h2>
+
+<mat-dialog-content>
+  <p>
+    @if (data.alarms.length === 1) {
+      {{ data.alarms[0].id.namespace }}
+      @if (data.alarms[0].id.name) {
+        /{{ data.alarms[0].id.name }}
+      }
+    }
+    @if (data.alarms.length !== 1) {
+      {{ data.alarms.length }} selected alarms.
+    }
+  </p>
+  <form [formGroup]="formGroup" class="ya-form">
+    <ya-field label="Duration">
+      <ya-select formControlName="duration" [options]="durationOptions" />
+    </ya-field>
+
+    <ya-field label="Comment">
+      <textarea formControlName="comment" rows="5" style="resize: none"></textarea>
+    </ya-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <ya-button mat-dialog-close>CANCEL</ya-button>
+  <ya-button appearance="primary" (click)="shelve()" [disabled]="!formGroup.valid">OK</ya-button>
+</mat-dialog-actions>

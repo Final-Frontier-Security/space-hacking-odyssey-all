@@ -1,0 +1,36 @@
+<h2 mat-dialog-title>Edit query</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="ya-form">
+    <ya-field label="Name">
+      <input formControlName="name" type="text" />
+    </ya-field>
+    <ya-field label="Query">
+      <ya-filter-textarea formControlName="filter" />
+    </ya-field>
+    <ya-field label="Severity">
+      <ya-select formControlName="severity">
+        <ya-option id="INFO" label="Info level" />
+        <ya-option id="WATCH" label="Watch level" />
+        <ya-option id="WARNING" label="Warning level" />
+        <ya-option id="DISTRESS" label="Distress level" />
+        <ya-option id="CRITICAL" label="Critical level" />
+        <ya-option id="SEVERE" label="Severe level" />
+      </ya-select>
+    </ya-field>
+    <ya-field label="Source">
+      <ya-multi-select
+        formControlName="source"
+        [options]="data.sourceOptions"
+        emptyOption="Any source" />
+    </ya-field>
+    <ya-field label="Share with other users">
+      <mat-slide-toggle formControlName="shared" />
+    </ya-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <ya-button mat-dialog-close>CANCEL</ya-button>
+  <ya-button appearance="primary" (click)="save()" [disabled]="!form.valid">SAVE</ya-button>
+</mat-dialog-actions>

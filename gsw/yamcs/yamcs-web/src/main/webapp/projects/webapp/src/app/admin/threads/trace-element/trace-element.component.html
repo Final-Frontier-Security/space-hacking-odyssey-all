@@ -1,0 +1,6 @@
+<span class="jpackage">{{ classPackage }}.</span>
+<span class="jclass">{{ classShortName }}.</span>
+<span class="jmethod">{{ element().methodName }}</span>
+@if (element().lineNumber; as lineno) {
+  <span class="lineno">(line: {{ lineno }})</span>
+}

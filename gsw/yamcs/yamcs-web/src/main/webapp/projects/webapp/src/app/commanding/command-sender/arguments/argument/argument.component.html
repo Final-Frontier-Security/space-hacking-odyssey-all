@@ -1,0 +1,65 @@
+@switch (type.engType) {
+  @case ("aggregate") {
+    <app-aggregate-argument
+      [name]="name"
+      [description]="description"
+      [type]="type"
+      [initialValue]="parsedInitialValue" />
+  }
+  @case ("binary") {
+    <app-binary-argument
+      [name]="name"
+      [description]="description"
+      [type]="type"
+      [formControlName]="name" />
+  }
+  @case ("boolean") {
+    <app-boolean-argument
+      [name]="name"
+      [description]="description"
+      [type]="type"
+      [formControlName]="name" />
+  }
+  @case ("enumeration") {
+    <app-enumeration-argument
+      [name]="name"
+      [description]="description"
+      [type]="type"
+      [formControlName]="name" />
+  }
+  @case ("float") {
+    <app-float-argument
+      [name]="name"
+      [description]="description"
+      [type]="type"
+      [formControlName]="name" />
+  }
+  @case ("integer") {
+    <app-integer-argument
+      [name]="name"
+      [description]="description"
+      [type]="type"
+      [formControlName]="name" />
+  }
+  @case ("string") {
+    <app-string-argument
+      [name]="name"
+      [description]="description"
+      [type]="type"
+      [formControlName]="name" />
+  }
+  @case ("time") {
+    <app-time-argument
+      [name]="name"
+      [description]="description"
+      [type]="type"
+      [formControlName]="name" />
+  }
+  @case (type.engType.endsWith("[]") ? type.engType : "") {
+    <app-array-argument
+      [name]="name"
+      [description]="description"
+      [type]="type"
+      [initialValue]="parsedInitialValue" />
+  }
+}

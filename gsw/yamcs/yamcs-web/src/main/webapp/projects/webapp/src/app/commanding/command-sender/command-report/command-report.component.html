@@ -1,0 +1,25 @@
+<ya-instance-page>
+  <ya-instance-toolbar label="Send a command" />
+
+  <app-send-command-wizard-step step="3" />
+
+  @if (command$ | async; as command) {
+    <ya-panel>
+      <app-command-detail2 [command]="command" />
+      <ng-container>
+        <br />
+        <mat-divider />
+        <br />
+        <ya-button routerLink="/commanding/send" [queryParams]="{ c: yamcs.context }">
+          Send another command
+        </ya-button>
+        &nbsp;&nbsp;
+        <ya-button
+          [routerLink]="'/commanding/send' + command.commandName"
+          [queryParams]="{ c: yamcs.context, template: command.id }">
+          Resend this command
+        </ya-button>
+      </ng-container>
+    </ya-panel>
+  }
+</ya-instance-page>

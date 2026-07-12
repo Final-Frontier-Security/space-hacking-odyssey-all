@@ -1,0 +1,21 @@
+.count {
+  display: inline-block;
+  border-radius: 2px;
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #000;
+  margin-left: 1em;
+  padding: 0 5px;
+}
+
+.count.unacked.watch,
+.count.unacked.warning {
+  background-color: var(--y-warning-color);
+  color: #fff;
+}
+
+.count.unacked.distress,
+.count.unacked.critical,
+.count.unacked.severe {
+  background-color: var(--y-error-color);
+  color: #fff;
+}

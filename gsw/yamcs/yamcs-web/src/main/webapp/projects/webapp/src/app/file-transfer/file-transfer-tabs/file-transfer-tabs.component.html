@@ -1,0 +1,19 @@
+<ya-page-tabs>
+  <a
+    routerLink="/file-transfer"
+    routerLinkActive
+    [routerLinkActiveOptions]="{ matrixParams: 'exact', paths: 'exact', queryParams: 'ignored' }"
+    #rla="routerLinkActive"
+    [class.active]="rla.isActive"
+    [queryParams]="{ c: yamcs.context, service: service()?.name }">
+    Transfers
+  </a>
+  <a
+    routerLink="/file-transfer/log"
+    routerLinkActive
+    #rlb="routerLinkActive"
+    [class.active]="rlb.isActive"
+    [queryParams]="{ c: yamcs.context, service: service()?.name }">
+    Action log
+  </a>
+</ya-page-tabs>

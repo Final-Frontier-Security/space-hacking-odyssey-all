@@ -1,0 +1,7 @@
+instances:
+  - instance0
+  - instance1
+
+dataDir: ${java.io.tmpdir}/yamcs-data
+
+secretKey: testtest

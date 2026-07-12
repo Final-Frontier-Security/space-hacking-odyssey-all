@@ -1,0 +1,37 @@
+<ya-detail-pane>
+  @if (selectedStreamData$ | async; as selectedStreamData) {
+    <ya-detail-toolbar>Tuple</ya-detail-toolbar>
+    <div style="padding: 0 16px">
+      <app-stream-data [streamData]="selectedStreamData" />
+    </div>
+  } @else {
+    <ya-detail-toolbar>Select a tuple</ya-detail-toolbar>
+  }
+</ya-detail-pane>
+
+<div class="data-table-wrapper">
+  <ya-panel>
+    <table mat-table #table [dataSource]="dataSource" class="ya-data-table expand">
+      @for (column of availableColumns$ | async; track column) {
+        <ng-container [cdkColumnDef]="column">
+          <th mat-header-cell *cdkHeaderCellDef>{{ column }}</th>
+          <td mat-cell *cdkCellDef="let item">
+            {{ (item.column | columnValue: column | value) || "-" }}
+          </td>
+        </ng-container>
+      }
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *cdkHeaderCellDef class="expand"></th>
+        <td mat-cell *cdkCellDef="let row"></td>
+      </ng-container>
+
+      <tr mat-header-row *cdkHeaderRowDef="displayedColumns"></tr>
+      <tr
+        mat-row
+        *cdkRowDef="let row; columns: displayedColumns"
+        [ngClass]="{ selected: row === (selectedStreamData$ | async) }"
+        (click)="selectStreamData(row)"></tr>
+    </table>
+  </ya-panel>
+</div>

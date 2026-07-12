@@ -1,0 +1,30 @@
+@if (group$ | async; as group) {
+  <app-admin-page>
+    <app-admin-toolbar [label]="group.name">
+      <ya-page-button routerLink="edit" icon="edit">Edit group</ya-page-button>
+    </app-admin-toolbar>
+
+    <ya-panel class="ya-link">
+      @if (group.description) {
+        <div class="section-divider">
+          <mat-divider />
+        </div>
+        <h4>Description</h4>
+        <div style="white-space: pre-wrap">{{ group.description || "-" }}</div>
+      }
+      <br />
+      <div class="section-divider">
+        <mat-divider />
+      </div>
+      <h4>{{ group.users?.length || 0 }} members</h4>
+      @for (user of group.users; track user) {
+        <div>
+          <mat-icon class="icon16" style="vertical-align: middle" matTooltip="User">
+            person
+          </mat-icon>
+          <a [routerLink]="['/admin/iam/users', user.name]">{{ user.displayName || user.name }}</a>
+        </div>
+      }
+    </ya-panel>
+  </app-admin-page>
+}

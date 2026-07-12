@@ -1,0 +1,9 @@
+#ifndef _BACKDOOR_MSGIDS_H_
+#define _BACKDOOR_MSGIDS_H_
+
+#define BACKDOOR_CMD_MID     0x1880
+#define BACKDOOR_REQ_HK_MID  0x1881
+
+#define BACKDOOR_HK_TLM_MID  0x0880
+
+#endif /* _BACKDOOR_MSGIDS_H_ */

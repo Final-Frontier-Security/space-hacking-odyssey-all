@@ -1,0 +1,30 @@
+@if (option(); as option) {
+  <ya-field
+    [label]="option.name"
+    [hint]="option.required ? undefined : '(optional)'"
+    [class.error]="err.invalid$ | async">
+    <ya-meta>boolean</ya-meta>
+
+    @if (option.description?.length) {
+      <ya-help>
+        @for (description of option.description; track description) {
+          <p>{{ description }}</p>
+        }
+      </ya-help>
+    }
+
+    <ya-errors #err [controlName]="option.name" />
+
+    <div class="radio-group" [formGroup]="formGroup">
+      <label class="radio" [class.checked]="formGroup.value.enabled === 'true'">
+        <input type="radio" formControlName="enabled" value="true" />
+        True
+      </label>
+
+      <label class="radio" [class.checked]="formGroup.value.enabled === 'false'">
+        <input type="radio" formControlName="enabled" value="false" />
+        False
+      </label>
+    </div>
+  </ya-field>
+}

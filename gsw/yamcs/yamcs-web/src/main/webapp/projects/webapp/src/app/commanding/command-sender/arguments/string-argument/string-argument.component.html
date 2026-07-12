@@ -1,0 +1,24 @@
+<ya-field [label]="label" [class.error]="err.invalid$ | async">
+  @if (type.minChars !== undefined || type.maxChars !== undefined) {
+    <ya-meta>
+      chars:
+      <ya-interval [left]="type.minChars" [right]="type.maxChars" [singleValueIfEqual]="true" />
+    </ya-meta>
+  }
+  @if (type.unitSet) {
+    <ya-meta>
+      {{ type.unitSet | units }}
+    </ya-meta>
+  }
+  <ya-meta>{{ type.engType }}</ya-meta>
+
+  @if (description) {
+    <ya-help>
+      {{ description }}
+    </ya-help>
+  }
+
+  <ya-errors #err [controlName]="controlName" />
+
+  <input [formControl]="formControl" type="text" autocomplete="off" />
+</ya-field>

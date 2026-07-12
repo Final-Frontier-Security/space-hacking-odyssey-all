@@ -1,0 +1,237 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  position: relative;
+}
+
+/* Disable dashed border in menus etc. Only FF does this */
+::-moz-focus-inner {
+  border: 0;
+}
+
+body {
+  background-color: var(--y-background-color);
+  /* Without this FF font are too crispy */
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.material-symbols.icon12 {
+  font-size: 12px !important;
+  height: 12px !important;
+  width: 12px !important;
+}
+
+.material-symbols.icon14 {
+  font-size: 14px !important;
+  height: 14px !important;
+  width: 14px !important;
+}
+
+.material-symbols.icon16 {
+  font-size: 16px !important;
+  height: 16px !important;
+  width: 16px !important;
+}
+
+.mat-mdc-slide-toggle {
+  line-height: 24px !important;
+}
+
+.dialog-full-size {
+  max-width: none !important;
+}
+
+.dialog-full-size .mat-mdc-dialog-surface {
+  padding: 24px;
+  border-radius: 0 !important;
+}
+
+.dialog-force-no-scrollbar .mat-mdc-tab-body-content {
+  overflow-y: hidden !important;
+}
+
+.form-content {
+  padding: 24px;
+  max-width: 600px;
+}
+
+.form-content mat-toolbar {
+  background-color: var(--y-background-color);
+  font-size: 12px;
+  padding: 0;
+}
+
+dd,
+dt,
+.small {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.654);
+}
+
+dt {
+  font-weight: bold;
+}
+
+.ya-link a .material-symbols,
+a.ya-link .material-symbols {
+  text-decoration: none !important;
+}
+
+a.ya-link.ya-header-link {
+  color: inherit;
+}
+
+.ya-menu .mat-mdc-menu-item {
+  line-height: 32px;
+  height: 32px;
+  font-size: 12px;
+  padding: 0 16px;
+  min-height: 32px;
+}
+
+.ya-menu .mat-mdc-menu-content .mat-mdc-menu-item .mdc-list-item__primary-text,
+.ya-menu .mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
+  font-size: 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ya-menu .mat-mdc-menu-item .material-symbols {
+  font-size: 14px !important;
+  height: 14px !important;
+  width: 14px !important;
+  margin-right: 3px;
+  font-weight: 600;
+}
+
+.ya-menu.mat-mdc-menu-panel {
+  min-height: 24px;
+  max-width: 350px;
+}
+
+.ng-invalid:not(.ng-pristine) > .date-time-input > input,
+.ng-invalid:not(.ng-pristine) > .binary-input > input,
+input.ng-invalid:not(.ng-pristine) {
+  border-color: var(--y-error-color) !important;
+}
+
+.ya-autocomplete .mat-mdc-option {
+  height: auto;
+  line-height: 16px;
+  font-size: 12px;
+  min-height: 24px;
+}
+
+.hide,
+.noDisplay {
+  display: none;
+}
+
+.section-divider {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.mat-mdc-tab-link:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.mat-mdc-tab-nav-bar.secondary .mat-mdc-tab-link,
+.mat-mdc-tab-group.secondary .mat-mdc-tab {
+  height: 36px;
+  min-width: 0;
+  font-size: 13px;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--y-accent);
+}
+
+.mat-mdc-dialog-content .hint {
+  font-size: 12px;
+}
+
+.mat-mdc-tab-nav-bar.small-tabs .mat-mdc-tab-link,
+.mat-mdc-tab-group.small-tabs .mat-mdc-tab {
+  height: 28px;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: normal;
+}
+
+.mat-mdc-snack-bar-container .mat-mdc-button.mat-mdc-snack-bar-action {
+  color: whitesmoke !important;
+}
+
+.mat-mdc-dialog-actions ya-button:not(:last-child) {
+  margin-right: 7px;
+}
+
+.mat-mdc-paginator {
+  background-color: inherit !important;
+}
+
+.mat-mdc-button-toggle-focus-overlay {
+  display: none;
+}
+
+h2 {
+  font:
+    500 20px / 32px Roboto,
+    sans-serif;
+  letter-spacing: 0.0125em;
+  margin: 0 0 16px;
+}
+
+h3 {
+  font:
+    400 16px / 28px Roboto,
+    sans-serif;
+  letter-spacing: 0.009375em;
+  margin: 0 0 16px;
+}
+
+h4 {
+  font:
+    400 16px / 24px Roboto,
+    sans-serif;
+  letter-spacing: 0.03125em;
+  margin: 0 0 16px;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 12px;
+  letter-spacing: 0.0178571429em;
+}
+
+.elevation-z1 {
+  box-shadow:
+    0 2px 1px -1px #0003,
+    0 1px 1px #00000024,
+    0 1px 3px #0000001f;
+}
+
+@media print {
+  .mat-drawer,
+  .mat-toolbar {
+    display: none !important;
+  }
+
+  .page-content,
+  .mat-sidenav-container {
+    position: static !important;
+  }
+
+  .mat-drawer-content {
+    margin: 0 !important;
+  }
+
+  * {
+    overflow: visible !important;
+  }
+}

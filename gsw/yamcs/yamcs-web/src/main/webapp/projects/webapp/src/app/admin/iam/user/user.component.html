@@ -1,0 +1,79 @@
+@if (user$ | async; as user) {
+  <app-admin-page>
+    <app-admin-toolbar>
+      <ng-template app-admin-toolbar-label>
+        <ya-page-icon-button routerLink=".." icon="arrow_back" />
+        {{ user.displayName || user.name }}
+      </ng-template>
+
+      <ya-page-button routerLink="edit" icon="edit">Edit user</ya-page-button>
+      <ya-page-button
+        [disabled]="user.identities?.length"
+        (clicked)="showChangeUserPasswordDialog()"
+        icon="account_box">
+        Change password
+      </ya-page-button>
+    </app-admin-toolbar>
+
+    <ya-panel class="ya-link">
+      <dl class="dl-horizontal">
+        <dt>Username</dt>
+        <dd>{{ user.name }}</dd>
+        <dt>Display name</dt>
+        <dd>{{ user.displayName || "-" }}</dd>
+        <dt>Email</dt>
+        <dd>{{ user.email || "-" }}</dd>
+        <dt>Joined</dt>
+        <dd>{{ user.creationTime | datetime }}</dd>
+        <dt>Confirmed at</dt>
+        <dd>{{ (user.confirmationTime | datetime) || "never" }}</dd>
+        <dt>Last login</dt>
+        <dd>{{ (user.lastLoginTime | datetime) || "never" }}</dd>
+        <dt>Active</dt>
+        <dd>{{ user.active }}</dd>
+        <dt>Superuser</dt>
+        <dd>{{ user.superuser }}</dd>
+        <dt>Created by</dt>
+        <dd>
+          @if (user.createdBy) {
+            <a [routerLink]="['../' + user.createdBy.name]">{{ user.createdBy.name || "-" }}</a>
+          } @else {
+            -
+          }
+        </dd>
+      </dl>
+      <div class="section-divider">
+        <mat-divider />
+      </div>
+      <h4>{{ user.roles?.length || "0" }} assigned roles</h4>
+      @for (role of user.roles; track role) {
+        {{ role.name }}
+        <br />
+      }
+      @if (user.identities) {
+        <div class="section-divider">
+          <mat-divider />
+        </div>
+        <h4>External Identities</h4>
+        <table yaDataTable>
+          <tr>
+            <th>Identity</th>
+            <th>Provider</th>
+            <th></th>
+          </tr>
+          @for (identity of user.identities; track identity) {
+            <tr>
+              <td>{{ identity.identity }}</td>
+              <td>{{ identity.provider }}</td>
+              <td>
+                <ya-text-action icon="delete" (click)="deleteIdentity(identity)">
+                  DELETE
+                </ya-text-action>
+              </td>
+            </tr>
+          }
+        </table>
+      }
+    </ya-panel>
+  </app-admin-page>
+}

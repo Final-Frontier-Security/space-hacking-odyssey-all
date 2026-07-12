@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Result</title>
+</head>
+<body>
+    <h1>Uploaded Zip File Content</h1>
+        <h2>List of .txt files:</h2>
+        <ul>
+            {% for target in targets %}
+                <li>{{ target.name }}</li>
+            {% endfor %}
+        </ul>
+        <h2> commands</h2>
+        <ul>
+            {% for command in commands %}
+                <li>{{ command.name }}</li>
+            {% endfor %}
+        </ul>
+        <h2> parameters</h2>
+        <ul>
+            {% for parameter in command_parameters %}
+                <li>{{ parameter.name }}</li>
+            {% endfor %}
+        </ul>
+    <a href="/">Upload another file</a>
+</body>
+</html>

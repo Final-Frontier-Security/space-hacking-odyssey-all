@@ -1,0 +1,12 @@
+<a
+  mat-list-item
+  [routerLink]="routerLink()"
+  [queryParams]="queryParams"
+  [class.subitem]="subitem"
+  [class.link-active]="linkActive()"
+  [style.color]="color ? color + ' !important' : undefined">
+  @if (subitem) {
+    <div style="display: inline-block; width: 60px"></div>
+  }
+  <ng-content />
+</a>

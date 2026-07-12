@@ -1,0 +1,33 @@
+<ya-instance-page>
+  <ya-instance-toolbar label="Run a script" />
+
+  <div class="form-content ya-form">
+    <form [formGroup]="form" novalidate autocomplete="off">
+      <ya-field label="Script" hint="(required)">
+        <ya-select formControlName="script" [options]="scriptOptions$ | async" />
+      </ya-field>
+
+      <ya-field label="Script arguments">
+        <input type="text" formControlName="args" />
+      </ya-field>
+    </form>
+    <p>&nbsp;</p>
+    <mat-toolbar>
+      <span style="flex: 1 1 auto"></span>
+      <ya-button appearance="primary" (click)="runScript()" [disabled]="!form.valid">Run</ya-button>
+      @if (showSchedule()) {
+        &nbsp;
+        <ya-icon-action
+          [matMenuTriggerFor]="!form.valid ? null : sendMenu"
+          icon="arrow_drop_down"
+          [padding]="false"
+          [disabled]="!form.valid"
+          style="line-height: 12px" />
+        <mat-menu #sendMenu="matMenu" class="ya-menu" [overlapTrigger]="false">
+          <button mat-menu-item (click)="runScript()">Run now</button>
+          <button mat-menu-item (click)="openScheduleScriptDialog()">Run later...</button>
+        </mat-menu>
+      }
+    </mat-toolbar>
+  </div>
+</ya-instance-page>

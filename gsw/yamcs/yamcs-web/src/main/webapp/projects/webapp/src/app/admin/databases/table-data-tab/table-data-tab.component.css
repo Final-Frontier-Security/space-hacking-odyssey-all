@@ -1,0 +1,18 @@
+.data-table-wrapper {
+  position: relative;
+  overflow: auto;
+  height: 100%;
+}
+
+.data-table-wrapper th,
+.data-table-wrapper td {
+  white-space: nowrap;
+}
+
+.data-table-wrapper td {
+  cursor: pointer;
+}
+
+.data-table-wrapper tr:hover td {
+  background: #fafafa;
+}

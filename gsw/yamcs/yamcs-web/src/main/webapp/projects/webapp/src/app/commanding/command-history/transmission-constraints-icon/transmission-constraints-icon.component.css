@@ -1,0 +1,25 @@
+:host {
+  line-height: 0;
+  font-size: 0;
+}
+
+.pending {
+  color: lightgrey;
+  animation: yspin 2s infinite linear;
+}
+
+.not-pending {
+  color: lightgrey;
+}
+
+@keyframes yspin {
+  0% {
+    -webkit-transform: rotate(0deg) scaleX(-1);
+    transform: rotate(0deg) scaleX(-1);
+  }
+
+  100% {
+    -webkit-transform: rotate(359deg) scaleX(-1);
+    transform: rotate(359deg) scaleX(-1);
+  }
+}

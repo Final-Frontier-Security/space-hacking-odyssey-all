@@ -1,0 +1,11 @@
+**********************************  Remote 42 graphics (opstation) ********************
+TX                                      ! IPC Mode (OFF,TX,RX,TXRX,ACS,WRITEFILE,READFILE)
+"State.42"                              ! File name for WRITE or READ
+SERVER                                  ! Socket Role (SERVER,CLIENT,GMSEC_CLIENT)
+fortytwo       10001                     ! Server Host Name, Port
+FALSE                                   ! Allow Blocking (i.e. wait on RX)
+FALSE                                   ! Echo to stdout
+3                                       ! Number of TX prefixes
+"SC"                                    ! Prefix 0
+"Orb"                                   ! Prefix 1
+"World"                                 ! Prefix 2

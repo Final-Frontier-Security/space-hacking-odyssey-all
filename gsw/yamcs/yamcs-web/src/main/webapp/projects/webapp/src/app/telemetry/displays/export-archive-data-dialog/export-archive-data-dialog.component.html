@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>Export archive data</h2>
+
+<mat-dialog-content class="ya-form">
+  <form [formGroup]="form">
+    <mat-tab-group class="small-tabs" [mat-stretch-tabs]="false">
+      <mat-tab label="Content">
+        <div style="margin-top: 1em">
+          <ya-field label="Start">
+            <ya-date-time-input cdkFocusRegionstart formControlName="start" />
+          </ya-field>
+
+          <ya-field label="Stop">
+            <ya-date-time-input formControlName="stop" />
+          </ya-field>
+
+          <ya-field label="Interval (ms)" hint="(optional)">
+            <input formControlName="interval" class="ya-input" type="text" />
+          </ya-field>
+        </div>
+      </mat-tab>
+      <mat-tab label="Format">
+        <div style="margin-top: 1em">
+          <ya-field label="CSV column delimiter">
+            <ya-select formControlName="delimiter" [options]="delimiterOptions" />
+          </ya-field>
+
+          <ya-field label="Header">
+            <ya-select formControlName="header" [options]="headerOptions" />
+          </ya-field>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <ya-button mat-dialog-close>CANCEL</ya-button>
+  <ya-download-button
+    [link]="downloadURL$ | async"
+    appearance="primary"
+    (click)="closeDialog()"
+    [disabled]="!form.valid">
+    DOWNLOAD
+  </ya-download-button>
+</mat-dialog-actions>

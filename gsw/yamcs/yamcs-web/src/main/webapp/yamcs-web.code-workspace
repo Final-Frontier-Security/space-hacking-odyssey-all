@@ -1,0 +1,45 @@
+{
+  "folders": [
+    {
+      "path": ".",
+    },
+  ],
+  "extensions": {
+    "recommendations": ["angular.ng-template", "esbenp.prettier-vscode"],
+  },
+  "settings": {
+    "css.format.enable": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit",
+    },
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2,
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "html.format.enable": true,
+    "javascript.format.enable": true,
+    "javascript.preferences.importModuleSpecifier": "relative",
+    "json.format.enable": true,
+    "search.exclude": {
+      "**/dist": true,
+      "**/node_modules": true,
+    },
+    "typescript.format.enable": true,
+    "typescript.preferences.importModuleSpecifier": "project-relative",
+    "[css]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[html]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[jsonc]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+    },
+  },
+}

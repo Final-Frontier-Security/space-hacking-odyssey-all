@@ -1,0 +1,81 @@
+<ya-field [label]="label">
+  <ya-meta>aggregate</ya-meta>
+
+  @if (description) {
+    <ya-help>
+      {{ description }}
+    </ya-help>
+  }
+
+  <div class="members" [formGroupName]="controlName">
+    @for (member of type.member; track member; let i = $index; let isFirst = $first) {
+      <div [style.paddingTop.px]="isFirst ? 0 : 10">
+        @switch (member.type.engType) {
+          @case ("aggregate") {
+            <app-aggregate-argument
+              [name]="member.name"
+              [type]="member.type"
+              [description]="member.shortDescription"
+              [initialValue]="memberInitialValues[i]" />
+          }
+          @case ("binary") {
+            <app-binary-argument
+              [name]="member.name"
+              [type]="member.type"
+              [description]="member.shortDescription"
+              [formControlName]="member.name" />
+          }
+          @case ("boolean") {
+            <app-boolean-argument
+              [name]="member.name"
+              [type]="member.type"
+              [description]="member.shortDescription"
+              [formControlName]="member.name" />
+          }
+          @case ("enumeration") {
+            <app-enumeration-argument
+              [name]="member.name"
+              [type]="member.type"
+              [description]="member.shortDescription"
+              [formControlName]="member.name" />
+          }
+          @case ("float") {
+            <app-float-argument
+              [name]="member.name"
+              [type]="member.type"
+              [description]="member.shortDescription"
+              [formControlName]="member.name" />
+          }
+          @case ("integer") {
+            <app-integer-argument
+              [name]="member.name"
+              [type]="member.type"
+              [description]="member.shortDescription"
+              [formControlName]="member.name" />
+          }
+          @case ("string") {
+            <app-string-argument
+              [name]="member.name"
+              [type]="member.type"
+              [description]="member.shortDescription"
+              [formControlName]="member.name" />
+          }
+          @case ("time") {
+            <app-time-argument
+              [name]="member.name"
+              [type]="member.type"
+              [description]="member.shortDescription"
+              [formControlName]="member.name" />
+          }
+          @case (member.type.engType.endsWith("[]") ? member.type.engType : "") {
+            <app-array-argument
+              [name]="member.name"
+              [type]="member.type"
+              [description]="member.shortDescription"
+              [initialValue]="memberInitialValues[i]" />
+          }
+        }
+      </div>
+    }
+  </div>
+</ya-field>

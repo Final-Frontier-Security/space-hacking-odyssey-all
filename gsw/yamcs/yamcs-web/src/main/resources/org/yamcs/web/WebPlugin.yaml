@@ -1,0 +1,313 @@
+#
+# Global Options
+#
+# Can be used in 'yamcs.yaml' under a section 'yamcs-web'.
+#
+options:
+  tag:
+    title: Tag
+    description:
+      - Short descriptor string of this Yamcs server. If present this is shown in the top
+        bar. The primary motivation for this option is to be able to distinguish between
+        multiple Yamcs servers in distributed deployments.
+    type: STRING
+
+  logo:
+    title: Logo
+    description:
+      - Filesystem path to an image to be shown in the bottom of the left sidebar. Images
+        larger than the width of the sidebar (currently 250px) are resized to fit.
+    type: STRING
+
+  preferredNamespace:
+    title: Preferred Namespace
+    description:
+      - Where possible prefer to display the alias of a parameter or command, as defined
+        for the specified namespace.
+      - Use of this property only makes sense if your MDB definition includes alternative names.
+    type: STRING
+    # Beta. Not sure to keep it in its current form.
+    hidden: true
+
+  extraHeaderHTML:
+    title: Extra Header HTML
+    description:
+      - Additional HTML to be included at the end of the <head></head> section.
+    type: STRING
+
+  displayBucket:
+    title: Display Bucket
+    description:
+      - Bucket where to find display resources.
+    type: STRING
+    default: displays
+
+  stackBucket:
+    title: Stack Bucket
+    description:
+      - Bucket where to find stacks.
+    type: STRING
+    default: stacks
+
+  staticRoot:
+    title: Static Root
+    description:
+      - Filesystem path where to locate the web files for the Yamcs Web Interface
+        (.js, .css, .html, ...). If not specified, Yamcs will search the
+        classpath for these resources (preferred).
+      - It should only be necessary to use this option when doing development work
+        on the Yamcs Web Interface. It allows to run npm in watch mode for a
+        save-and-refresh development cycle.
+    type: STRING
+
+  twoStageCommanding:
+    title: Two-stage Commanding
+    description:
+      - Controls whether to protect commanding from from accidental clicks.
+        If true issuing a command will require two clicks at least (arm-and-issue).
+      - This feature is primarily intended for an operational setting.
+    type: BOOLEAN
+    default: false
+
+  collapseInitializedArguments:
+    title: Collapse Initialized Arguments
+    description:
+      - Controls the display of argument fields of a command form. If true,
+        arguments with an initial value are collapsed by default.
+    type: BOOLEAN
+    default: true
+
+  commandExports:
+    title: Show Command Export Functionalities
+    description:
+      - Controls whether the button to generate an offline command report is shown.
+    type: BOOLEAN
+    default: true
+
+  disableLoginForm:
+    title: Disable Login Form
+    description:
+      - Set to true if the login form should never be shown.
+      - For example because access should exclusively occur through an external identity provider.
+    type: BOOLEAN
+    default: false
+
+  logoutRedirectUrl:
+    title: Logout Redirect URL
+    description:
+      - The URL to redirect to after logging out of Yamcs. If unset, users are
+        redirected to the built-in login page.
+    type: STRING
+
+  utc:
+    title: UTC
+    description:
+      - Format time in UTC. If false, format in browser local time.
+      - This setting also affects time inputs.
+    type: BOOLEAN
+    default: true
+
+  cookie:
+    title: Cookie
+    description:
+      - Configure cookies planted by Yamcs Web.
+      - These values should be configured when hardening your deployment.
+    type: MAP
+    applySpecDefaults: true
+    suboptions:
+      secure:
+        title: Secure attribute
+        description:
+          - Add a secure attribute
+          - This should be set to ``true`` when Yamcs is served over HTTPS
+        type: BOOLEAN
+        default: false
+      sameSite:
+        title: SameSite attribute
+        description:
+          - Configure the SameSite attribute
+          - This should be set to ``strict`` when Yamcs is served over HTTPS
+        type: STRING
+        choices:
+          - lax
+          - strict
+          - none
+        default: lax
+
+  dass:
+    title: Show DaSS Functionalities
+    description:
+      - Controls whether functionalities related to DaSS gap retrieval
+        are shown.
+      - This function requires proprietary services that are not available
+        in the open-source Yamcs distribution, and shall be removed whenever
+        technically possible.
+    type: BOOLEAN
+    default: false
+    hidden: true
+    deprecationMessage: Remove this property. This functionality is now provided from a plugin.
+
+  tc:
+    title: Show Commanding Functionalities
+    description:
+      - Controls whether commmanding functionalities are shown.
+    type: BOOLEAN
+    default: true
+
+  tmArchive:
+    title: Show TM Archive Functionalities
+    description:
+      - Controls whether functionalities related to TM archiving are shown.
+    type: BOOLEAN
+    default: true
+
+  siteLinks:
+    title: Site Links
+    description:
+      - Configure custom site links that can be visited from the website header.
+    type: LIST
+    elementType: MAP
+    suboptions:
+      url:
+        title: URL
+        description:
+          - Site URL
+        type: STRING
+        required: true
+      label:
+        title: Label
+        description:
+          - Descriptive name of this URL.
+        type: STRING
+        required: true
+      external:
+        title: External Link
+        description:
+          - Mark this link as external. External links are opened in a new tab.
+        type: BOOLEAN
+        default: false
+
+  events:
+    title: Events
+    description:
+      - Configure event-related properties.
+    type: MAP
+    suboptions:
+      extraColumns:
+        title: Extra Columns
+        description:
+          - Additional event columns specific to a deployment.
+        type: LIST
+        elementType: MAP
+        suboptions:
+          id:
+            title: ID
+            description:
+              - Identifier of this column. This corresponds with a key in the
+                extra map of an event.
+            type: STRING
+            required: true
+          label:
+            title: Label
+            description:
+              - Descriptive name of this column.
+            type: STRING
+            required: true
+          visible:
+            title: Visible
+            description:
+              - Whether this column is visible by default.
+            type: BOOLEAN
+            default: true
+          alwaysVisible:
+            title: Always Visible
+            description:
+              - Whether this column always visible.
+              - If false, the user may choose to hide it.
+            type: BOOLEAN
+            default: false
+          after:
+            title: After
+            description:
+              - Identifier of the column after which to position this column.
+            type: STRING
+            required: true
+            choices:
+              - severity
+              - gentime
+              - message
+              - source
+              - type
+              - rectime
+              - seqNumber
+
+  opi:
+    title: OPI
+    description:
+      - Customize OPI display rendering.
+    type: MAP
+    applySpecDefaults: true
+    suboptions:
+      disconnectedColor:
+        title: Disconnected Color
+        description:
+          - CSS color string for the Disconnected color. Default is pink.
+        type: STRING
+        default: "#a020f0"
+      invalidColor:
+        title: Invalid Color
+        description:
+          - CSS color string for the Invalid color. Default is purple.
+        type: STRING
+        default: "#ff00ff"
+      majorColor:
+        title: Major Color
+        description:
+          - CSS color string for the Major color. Default is red.
+        type: STRING
+        default: "#ff0000"
+      minorColor:
+        title: Minor Color
+        description:
+          - CSS color string for the Minor color. Default is orange.
+        type: STRING
+        default: "#ff8000"
+
+#
+# Instance-specific Options
+#
+# Can be used in 'yamcs.{intance}.yaml' under a section 'yamcs-web'.
+#
+instanceOptions:
+  displayBucket:
+    title: Display Bucket
+    description:
+      - Bucket where to find display resources.
+      - If unset, defaults to the display bucket specified globally
+    type: STRING
+
+  stackBucket:
+    title: Stack Bucket
+    description:
+      - Bucket where to find stacks.
+      - If unset, defaults to the stack bucket specified globally
+    type: STRING
+
+  parameterArchive:
+    title: Make use of Parameter Archive
+    description:
+      - Controls whether the Parameter Archive is used. This is a secondary
+        storage structure optimized for parameter querying.
+      - When disabled, parameter history is retrieved by re-extracting stored
+        packets on the fly.
+      - The default value of ``auto`` will use the Parameter Archive, if it
+        is available for the instance.
+      - If ``tmArchive`` is false, this option has no effect.
+      - This option does not currently apply to CSV exports which always
+        do replays (shall be addressed in a future version of Yamcs).
+    type: STRING
+    default: auto
+    choices:
+      - enabled
+      - disabled
+      - auto

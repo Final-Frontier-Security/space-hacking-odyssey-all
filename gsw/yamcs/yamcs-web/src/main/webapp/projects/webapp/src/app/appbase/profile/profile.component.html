@@ -1,0 +1,101 @@
+<app-appbase-toolbar label="Profile" />
+
+@if (user$ | async; as user) {
+  <div class="form-content">
+    <dl class="dl-horizontal no-lead">
+      <dt>Username</dt>
+      <dd>{{ user.getName() }}</dd>
+      <dt>Display name</dt>
+      <dd>{{ user.getDisplayName() || "-" }}</dd>
+      <dt>Email</dt>
+      <dd>{{ user.getEmail() || "-" }}</dd>
+      @if (user.isSuperuser()) {
+        <dt>Attributes</dt>
+        <dd>⚡️ superuser</dd>
+      }
+      @if (config.commandClearanceEnabled) {
+        <dt>Command clearance</dt>
+        <dd>
+          <app-significance-level [level]="user.getClearance()" [grayscale]="true" />
+        </dd>
+      }
+    </dl>
+    <mat-divider />
+    <dl class="dl-horizontal">
+      <dt>Roles</dt>
+      <dd>
+        @if (user.getRoles().length) {
+          @for (role of user.getRoles(); track role; let last = $last) {
+            {{ role.name }}
+            @if (!last) {
+              <span>,</span>
+            }
+          }
+        }
+        @if (!user.getRoles().length) {
+          -
+        }
+      </dd>
+    </dl>
+    @if (user.isSuperuser()) {
+      <mat-divider />
+      <dl class="dl-horizontal">
+        <dt>System privileges</dt>
+        <dd>All privileges implied</dd>
+      </dl>
+      <mat-divider />
+      <dl class="dl-horizontal">
+        <dt>Object privileges</dt>
+        <dd>All privileges implied</dd>
+      </dl>
+    }
+    @if (!user.isSuperuser()) {
+      <mat-divider />
+      <dl class="dl-horizontal">
+        <dt>System privileges</dt>
+        <dd>
+          @if (user.getSystemPrivileges().length) {
+            <table yaDataTable>
+              @for (privilege of user.getSystemPrivileges(); track privilege) {
+                <tr>
+                  <td>{{ privilege }}</td>
+                </tr>
+              }
+            </table>
+          }
+          @if (!user.getSystemPrivileges().length) {
+            -
+          }
+        </dd>
+      </dl>
+      <mat-divider />
+      <dl class="dl-horizontal">
+        <dt>Object privileges</dt>
+        <dd>
+          @if (user.getObjectPrivileges().length) {
+            <table yaDataTable>
+              @for (p of user.getObjectPrivileges(); track p) {
+                <tr>
+                  <th class="lcolumn">{{ p.type }}</th>
+                  <td>
+                    @if (p.objects) {
+                      @for (object of p.objects; track object) {
+                        {{ object }}
+                        <br />
+                      }
+                    } @else {
+                      -
+                    }
+                  </td>
+                </tr>
+              }
+            </table>
+          }
+          @if (!user.getObjectPrivileges().length) {
+            -
+          }
+        </dd>
+      </dl>
+    }
+  </div>
+}

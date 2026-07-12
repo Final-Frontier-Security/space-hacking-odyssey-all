@@ -1,0 +1,19 @@
+.item.with-label {
+  margin-right: 5px;
+}
+
+.sep {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.mat-icon {
+  vertical-align: middle;
+  font-size: 12px !important;
+  height: 12px !important;
+  width: 12px !important;
+}
+
+.action {
+  cursor: pointer;
+}

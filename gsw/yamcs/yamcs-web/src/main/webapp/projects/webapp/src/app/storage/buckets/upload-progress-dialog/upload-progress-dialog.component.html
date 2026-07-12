@@ -1,0 +1,32 @@
+<h3 mat-dialog-title>
+  <div style="float: right">
+    <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+  </div>
+  Uploads
+</h3>
+
+<mat-dialog-content>
+  <div #tableWrapper class="table-wrapper">
+    <table style="font-size: small; width: 100%">
+      @for (upload of uploads$ | async; track upload) {
+        <tr [class.failed]="upload.err">
+          <td>{{ upload.filename }}</td>
+          <td style="width: 100px; text-align: center">
+            @if (upload.complete && !upload.err) {
+              Finished
+            }
+            @if (upload.complete && upload.err) {
+              <mat-icon class="icon14" style="vertical-align: middle" [matTooltip]="upload.err">
+                error
+              </mat-icon>
+              Failed
+            }
+            @if (!upload.complete) {
+              <ya-dots />
+            }
+          </td>
+        </tr>
+      }
+    </table>
+  </div>
+</mat-dialog-content>
