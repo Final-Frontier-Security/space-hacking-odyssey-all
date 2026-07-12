@@ -59,7 +59,7 @@ for script in hack_groundstation unhack_groundstation restart-satellite stop_42 
 Type=Application
 Name=$NICE_NAME
 Exec=$BASE_DIR/opstation/scripts/${script}.sh
-Icon=utilities-terminal
+Icon=$BASE_DIR/opstation/assets/${script}.png
 Terminal=true
 Categories=Utility;
 EOF
