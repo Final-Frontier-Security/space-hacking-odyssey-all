@@ -59,6 +59,7 @@ for script in hack_groundstation unhack_groundstation restart-satellite stop_42 
 Type=Application
 Name=$NICE_NAME
 Exec=$BASE_DIR/opstation/scripts/${script}.sh
+Icon=utilities-terminal
 Terminal=true
 Categories=Utility;
 EOF
@@ -87,7 +88,7 @@ WALLPAPER="$BASE_DIR/opstation/assets/background.png"
 if [ -f "$WALLPAPER" ]; then
     gsettings set org.gnome.desktop.background picture-uri "file://$WALLPAPER" 2>/dev/null || true
     gsettings set org.gnome.desktop.background picture-uri-dark "file://$WALLPAPER" 2>/dev/null || true
-    gsettings set org.gnome.desktop.background picture-options 'zoom' 2>/dev/null || true
+    gsettings set org.gnome.desktop.background picture-options 'stretched' 2>/dev/null || true
 fi
 
 # Install SSH config
