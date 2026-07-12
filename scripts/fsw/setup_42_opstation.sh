@@ -48,9 +48,8 @@ echo "Installing utility desktop shortcuts..."
 
 APP_DIR="$HOME/.local/share/applications"
 mkdir -p "$APP_DIR"
-DOCK_APPS=""
 
-for script in hack_groundstation unhack_groundstation restart-satellite stop_42 stop_holodeck; do
+for script in hack_groundstation unhack_groundstation restart-satellite stop_42; do
     NICE_NAME=$(echo $script | tr '_-' '  ' | sed 's/\b\(.\)/\u\1/g')
     DESKTOP_FILE="nos3-${script}.desktop"
 
@@ -68,20 +67,12 @@ EOF
     cp "$APP_DIR/$DESKTOP_FILE" "$DESKTOP_DIR/$DESKTOP_FILE"
     chmod +x "$DESKTOP_DIR/$DESKTOP_FILE"
     gio set "$DESKTOP_DIR/$DESKTOP_FILE" metadata::trusted true 2>/dev/null || true
-
-    DOCK_APPS="$DOCK_APPS '$DESKTOP_FILE',"
 done
 
-# Add 42 and Holodeck to app menu too
-DOCK_APPS="'42.desktop', 'holodeck.desktop', $DOCK_APPS"
-
 # Pin to GNOME dock/favorites
-CURRENT_FAVS=$(gsettings get org.gnome.shell favorite-apps 2>/dev/null)
-if [ -n "$CURRENT_FAVS" ]; then
-    # Append our apps to existing favorites
-    NEW_FAVS=$(echo "$CURRENT_FAVS" | sed "s/]$/, $DOCK_APPS]/; s/, ]/]/")
-    gsettings set org.gnome.shell favorite-apps "$NEW_FAVS" 2>/dev/null || true
-fi
+echo "Pinning apps to dock..."
+gsettings set org.gnome.shell favorite-apps \
+    "['nos3-hack_groundstation.desktop', 'nos3-unhack_groundstation.desktop', 'nos3-restart-satellite.desktop', 'nos3-stop_42.desktop']" 2>/dev/null || true
 
 # Set desktop wallpaper
 WALLPAPER="$BASE_DIR/opstation/assets/background.png"
