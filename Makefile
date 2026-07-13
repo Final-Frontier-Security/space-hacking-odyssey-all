@@ -279,7 +279,7 @@ deploy-opstation: ## Full opstation setup: prep 42, config, install desktop laun
 		cd ./run && git clone https://github.com/nasa-itc/42.git --depth 1 -b nos3-main; \
 	fi
 	python3 ./scripts/cfg/apply_42_ipc_patch.py ./run/42 ./patches/42-nos3-ipc
-	cd ./run/42 && make GUIFLAG=
+	docker run --rm -v $(CURDIR)/run/42:$(CURDIR)/run/42 -w $(CURDIR)/run/42 ivvitc/nos3-64:20251107 make
 	$(MAKE) config
 	./scripts/fsw/setup_42_opstation.sh
 	./opstation/holodeck/setup-holodeck.sh
