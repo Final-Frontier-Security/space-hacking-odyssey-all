@@ -50,7 +50,7 @@ Name=Holodeck
 Comment=Space Vehicle Attack Simulation Tool
 Exec=$SCRIPT_DIR/start-holodeck.sh
 Icon=$BASE_DIR/opstation/assets/holodeck.png
-Terminal=true
+Terminal=false
 Categories=Development;Education;
 EOF
 chmod +x "$DESKTOP_DIR/holodeck.desktop"

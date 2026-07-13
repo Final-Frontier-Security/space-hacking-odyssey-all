@@ -179,7 +179,7 @@ for i in $targets; do
         radio=$i"_RADIO"
         echo "TARGET $i $direct" >> plugin.txt
         echo "TARGET $i $radio" >> plugin.txt
-    elif [ "$i" = "CFDP" -o "$i" = "SIM_42_TRUTH" -o "$i" = "SYSTEM" -o "$i" = "TO_DEBUG" ]; then
+    elif [ "$i" = "CFDP" -o "$i" = "SYSTEM" -o "$i" = "TO_DEBUG" ]; then
         echo "TARGET $i $i" >> plugin.txt
     fi
 done
@@ -204,9 +204,6 @@ for i in $targets; do
     fi
 done
 echo "" >> plugin.txt
-
-echo "INTERFACE SIM_42_TRUTH_INT udp_interface.rb $SAT_HOST 5110 5111 nil nil 128 10.0 nil" >> plugin.txt
-echo "   MAP_TARGET SIM_42_TRUTH" >> plugin.txt
 
 # CFDP microservice
 if echo "$targets" | grep -q "CFDP"; then
