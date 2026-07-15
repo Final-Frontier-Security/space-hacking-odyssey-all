@@ -43,6 +43,12 @@ fi
 
 $SCRIPT_DIR/gsw/gsw_openc3_configure_tls.sh
 
+# Add OPENC3_ROOT_PASSWORD to .env for script runner access
+if ! grep -q "OPENC3_ROOT_PASSWORD" "$OPENC3_DIR/.env" 2>/dev/null; then
+    echo "OPENC3_ROOT_PASSWORD=R6dduYerdbMhYvge_FXVo_4yWx2vYyMaNiEW" >> "$OPENC3_DIR/.env"
+    echo "  Added OPENC3_ROOT_PASSWORD to .env"
+fi
+
 # Add CFDP file transfer volumes to compose.yaml (openc3-operator container)
 echo "Configure CFDP file transfer volumes..."
 mkdir -p "$OPENC3_DIR/send_files" "$OPENC3_DIR/received_files" "$OPENC3_DIR/microservice_logs"
@@ -56,9 +62,6 @@ with open(path) as f:
 # Find openc3-operator volumes section and insert after the plugins volume line
 in_operator = False
 inserted = False
-# Find openc3-cosmos-script-runner-api env section and insert OPENC3_ROOT_PASSWORD
-in_script_runner = False
-env_inserted = False
 out = []
 for i, line in enumerate(lines):
     out.append(line)
@@ -73,15 +76,6 @@ for i, line in enumerate(lines):
     # Stop looking once we leave openc3-operator
     if in_operator and inserted and line.strip().startswith('openc3-') and ':' in line and 'operator' not in line:
         in_operator = False
-    # Add OPENC3_ROOT_PASSWORD to script-runner-api environment
-    if 'openc3-cosmos-script-runner-api:' in line:
-        in_script_runner = True
-    if in_script_runner and not env_inserted and 'OPENC3_SERVICE_PASSWORD' in line:
-        indent = line[:len(line) - len(line.lstrip())]
-        out.append(f'{indent}OPENC3_ROOT_PASSWORD: \"R6dduYerdbMhYvge_FXVo_4yWx2vYyMaNiEW\"\n')
-        env_inserted = True
-    if in_script_runner and env_inserted and line.strip().startswith('openc3-') and ':' in line and 'script-runner' not in line:
-        in_script_runner = False
 with open(path, 'w') as f:
     f.writelines(out)
 if inserted:
@@ -89,10 +83,6 @@ if inserted:
 else:
     print('  ERROR: Could not find insertion point in compose.yaml for volumes')
     sys.exit(1)
-if env_inserted:
-    print('  Added OPENC3_ROOT_PASSWORD to script-runner-api environment')
-else:
-    print('  WARNING: Could not add OPENC3_ROOT_PASSWORD to compose.yaml')
 " "$COMPOSE_FILE"
     echo "  Verifying compose.yaml..."
     grep -q "send_files" "$COMPOSE_FILE" || { echo "ERROR: send_files not in compose.yaml after patching"; exit 1; }
