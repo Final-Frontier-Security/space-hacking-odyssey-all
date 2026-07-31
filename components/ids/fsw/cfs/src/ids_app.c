@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
 
@@ -48,18 +49,10 @@ void IDS_AppMain(void)
         {
             IDS_ProcessCommandPacket();
         }
-        else if (status == CFE_SB_TIME_OUT)
-        {
-            /* Timeout = time to scan */
-            IDS_ScanFiles();
-            IDS_ReportHousekeeping();
-        }
-        else
-        {
-            CFE_EVS_SendEvent(IDS_PIPE_ERR_EID, CFE_EVS_EventType_ERROR,
-                "IDS: SB Pipe Read Error = %d", (int)status);
-            IDS_AppData.RunStatus = CFE_ES_RunStatus_APP_ERROR;
-        }
+
+        /* Scan on every wakeup (timeout or after processing a command) */
+        IDS_ScanFiles();
+        IDS_ReportHousekeeping();
     }
 
     CFE_ES_PerfLogExit(IDS_PERF_ID);
@@ -101,6 +94,36 @@ int32 IDS_AppInit(void)
 
     /* Load canary file list and compute baselines */
     IDS_LoadCanaryList();
+
+    /* Create canary files if they don't exist (honeypots) */
+    {
+        /* Ensure data directory exists */
+        mkdir("data", 0755);
+
+        uint32 ci;
+        for (ci = 0; ci < IDS_AppData.fileCount; ci++)
+        {
+            struct stat cst;
+            if (stat(IDS_AppData.files[ci].path, &cst) != 0)
+            {
+                FILE *cf = fopen(IDS_AppData.files[ci].path, "w");
+                if (cf)
+                {
+                    /* Write some plausible decoy content */
+                    if (strstr(IDS_AppData.files[ci].path, "credentials"))
+                        fprintf(cf, "admin:s3cr3t_p4ss\nroot:fl1ght_0ps!\n");
+                    else if (strstr(IDS_AppData.files[ci].path, "keys"))
+                        fprintf(cf, "AES256-KEY: 4D6F6F6E4C69676874657232303236\n");
+                    else if (strstr(IDS_AppData.files[ci].path, "flight_plan"))
+                        fprintf(cf, "ORBIT_ADJUST T+3600 DV=0.5m/s AZ=045\nDEORBIT T+86400\n");
+                    else
+                        fprintf(cf, "CANARY\n");
+                    fclose(cf);
+                }
+            }
+        }
+    }
+
     IDS_Baseline();
 
     /* Log startup status to ids_log */
