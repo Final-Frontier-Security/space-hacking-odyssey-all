@@ -105,7 +105,7 @@ int32 IDS_AppInit(void)
 
     /* Log startup status to ids_log */
     {
-        char log_buf[128];
+        char log_buf[256];
         char cwd[128];
         if (getcwd(cwd, sizeof(cwd)) == NULL)
             strncpy(cwd, "(unknown)", sizeof(cwd));
