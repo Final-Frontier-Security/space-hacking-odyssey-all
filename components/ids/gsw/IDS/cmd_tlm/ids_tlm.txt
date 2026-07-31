@@ -1,0 +1,18 @@
+TELEMETRY IDS HK_TLM_PKT BIG_ENDIAN "IDS Housekeeping Telemetry"
+  APPEND_ID_ITEM     CCSDS_STREAMID  16  UINT  0x0895  "CCSDS Packet Identification"
+  APPEND_ITEM        CCSDS_SEQUENCE  16  UINT          "CCSDS Packet Sequence Control"
+  APPEND_ITEM        CCSDS_LENGTH    16  UINT          "CCSDS Packet Data Length"
+  APPEND_ITEM        SECONDS         32  UINT          "Timestamp Seconds"
+      UNITS Seconds sec
+  APPEND_ITEM        SUBSECS         16  UINT          "Timestamp Subseconds"
+      UNITS Milliseconds ms
+  APPEND_ITEM        SPARE2ALIGN     32  UINT          "Spare"
+  APPEND_ITEM        CMD_COUNT        8  UINT          "Command Count"
+  APPEND_ITEM        CMD_ERR_COUNT    8  UINT          "Command Error Count"
+  APPEND_ITEM        FILES_MONITORED  8  UINT          "Number of Canary Files Monitored"
+  APPEND_ITEM        MODIFY_COUNT     8  UINT          "Modification Detections"
+  APPEND_ITEM        ACCESS_COUNT     8  UINT          "Access Detections"
+  APPEND_ITEM        MISSING_COUNT    8  UINT          "Missing File Detections"
+  APPEND_ITEM        SCAN_INTERVAL    8  UINT          "Scan Interval (seconds)"
+  APPEND_ITEM        SPARE            8  UINT          "Spare"
+  APPEND_ITEM        LAST_ALERT     512  STRING        "Last Alerted File Path"

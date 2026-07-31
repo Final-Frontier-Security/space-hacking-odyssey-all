@@ -22,7 +22,7 @@ COMMAND CFDP DOWNLOAD_FROM_SATELLITE_CC BIG_ENDIAN "Download file from Satellite
   APPEND_PARAMETER    CCSDS_FC       8    UINT   MIN_UINT8   MAX_UINT8  29                    "CCSDS Command Function Code" 
   APPEND_PARAMETER    CCSDS_CHECKSUM 8    UINT   MIN_UINT8   MAX_UINT8  0                     "CCSDS Command Checksum"
   APPEND_PARAMETER    DESTINATION    512  STRING                        "test.txt"            "Name to save file as"
-  APPEND_PARAMETER    SOURCE         512  STRING                        "/cf/test.txt"        "File on satellite to download (must be in /cf/ folder)"
+  APPEND_PARAMETER    SOURCE         512  STRING                        "/cf/test.txt"        "File path on satellite to download"
 
 COMMAND CFDP UPLOAD_TO_SATELLITE_CC BIG_ENDIAN "Upload file to Satellite"
 #                     NAME           BITS TYPE   min VAL     max VAL    init VAL  DESCRIPTION
@@ -32,7 +32,7 @@ COMMAND CFDP UPLOAD_TO_SATELLITE_CC BIG_ENDIAN "Upload file to Satellite"
   APPEND_PARAMETER CCSDS_FC          8    UINT   MIN_UINT8   MAX_UINT8  30                  "CCSDS Command Function Code"
   APPEND_PARAMETER CCSDS_CHECKSUM    8    UINT   MIN_UINT8   MAX_UINT8  0                   "CCSDS Command Checksum"
   APPEND_PARAMETER    SOURCE         512  STRING                        "test.txt"            "File to upload to satellite"
-  APPEND_PARAMETER    DESTINATION    512  STRING                        "/cf/test.txt"        "Name to save file as (must be in /cf/ folder)"
+  APPEND_PARAMETER    DESTINATION    512  STRING                        "/cf/test.txt"        "Destination path on satellite to save file"
 
 COMMAND CFDP UPLOAD_TO_SATELLITE_DATA BIG_ENDIAN "Upload data to Satellite"
 #                     NAME           BITS TYPE   min VAL     max VAL    init VAL  DESCRIPTION

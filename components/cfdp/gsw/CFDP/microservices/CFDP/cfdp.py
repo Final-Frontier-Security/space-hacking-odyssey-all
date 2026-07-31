@@ -66,18 +66,16 @@ class CFDP(Microservice):
                 if pdu != 2:
                     if direction == 1:
                         # Download: satellite is sending file data to ground
-                        if self.past_data_recv != data:
-                            if data != "" and data is not None:
-                                log(f"DOWNLOAD receiving chunk for '{filename_dst}' (len={len(data) if data else 0})")
-                                try:
-                                    with open(os.path.join("/received_files", filename_dst.strip()), "ab") as f:
-                                        if type(data) != bytes:
-                                            f.write(data.encode())
-                                        else:
-                                            f.write(data)
-                                    self.past_data_recv = data
-                                except Exception as e:
-                                    log(f"ERROR writing received file: {e}")
+                        if data != "" and data is not None:
+                            log(f"DOWNLOAD receiving chunk for '{filename_dst}' (len={len(data) if data else 0})")
+                            try:
+                                with open(os.path.join("/received_files", filename_dst.strip()), "ab") as f:
+                                    if type(data) != bytes:
+                                        f.write(data.encode())
+                                    else:
+                                        f.write(data)
+                            except Exception as e:
+                                log(f"ERROR writing received file: {e}")
                     if direction == 2 and not self.upload_complete:
                         # Upload: ground needs to send file to satellite
                         self.sending_num = 0

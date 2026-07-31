@@ -63,6 +63,7 @@
 #include "sample_msgids.h"
 #include "cfdp_msgids.h"
 #include "ips_msgids.h"
+#include "ids_msgids.h"
 #include "generic_adcs_msgids.h"
 #include "generic_star_tracker_msgids.h"
 #include "mgr_msgids.h"
@@ -125,6 +126,7 @@ TO_LAB_Subs_t TO_LAB_Subs =
         {CFE_SB_MSGID_WRAP_VALUE(CFDP_HK_TLM_MID),             {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(CFDP_FILEDOWNLOAD_TLM_MID),   {0,0},  4200},
         {CFE_SB_MSGID_WRAP_VALUE(IPS_HK_TLM_MID),              {0,0},  64},
+        {CFE_SB_MSGID_WRAP_VALUE(IDS_HK_TLM_MID),              {0,0},  128},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_HK_TLM_MID),      {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_DI_MID),          {0,0},  32},
         {CFE_SB_MSGID_WRAP_VALUE(GENERIC_ADCS_AD_MID),          {0,0},  32},
