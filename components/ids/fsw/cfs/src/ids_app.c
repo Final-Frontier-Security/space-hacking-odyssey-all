@@ -236,8 +236,12 @@ void IDS_Baseline(void)
         {
             IDS_AppData.files[i].exists = 1;
             IDS_AppData.files[i].mtime = (uint32)st.st_mtime;
-            IDS_AppData.files[i].atime = (uint32)st.st_atime;
             IDS_AppData.files[i].crc = IDS_ComputeFileCRC(IDS_AppData.files[i].path);
+            /* Re-read atime AFTER CRC computation (reading the file updates atime) */
+            if (stat(IDS_AppData.files[i].path, &st) == 0)
+            {
+                IDS_AppData.files[i].atime = (uint32)st.st_atime;
+            }
         }
         else
         {
@@ -350,21 +354,19 @@ void IDS_ScanFiles(void)
 
 static uint32 IDS_ComputeFileCRC(const char *path)
 {
-    osal_id_t fd;
-    int32 status;
+    FILE *fp;
     uint8 buf[512];
-    int32 bytes_read;
+    size_t bytes_read;
     uint32 crc = 0;
 
-    status = OS_OpenCreate(&fd, path, OS_FILE_FLAG_NONE, OS_READ_ONLY);
-    if (status != OS_SUCCESS)
+    fp = fopen(path, "rb");
+    if (fp == NULL)
     {
         return 0;
     }
 
-    while ((bytes_read = OS_read(fd, buf, sizeof(buf))) > 0)
+    while ((bytes_read = fread(buf, 1, sizeof(buf), fp)) > 0)
     {
-        /* Simple Adler-32-like checksum (fast, good enough for integrity detection) */
         uint32 i;
         for (i = 0; i < (uint32)bytes_read; i++)
         {
@@ -372,7 +374,7 @@ static uint32 IDS_ComputeFileCRC(const char *path)
         }
     }
 
-    OS_close(fd);
+    fclose(fp);
     return crc;
 }
 
