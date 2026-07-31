@@ -7,8 +7,8 @@
 
 #define IDS_PIPE_DEPTH         32
 #define IDS_CANARY_LIST_PATH   "/cf/ids_canary.txt"
-#define IDS_LOG_PATH           "/data/ids_log.txt"
-#define IDS_LOG_OLD_PATH       "/data/ids_log.old"
+#define IDS_LOG_PATH           "data/ids_log.txt"
+#define IDS_LOG_OLD_PATH       "data/ids_log.old"
 #define IDS_LOG_MAX_SIZE       65536   /* 64KB max before rotation */
 #define IDS_MAX_FILES          32
 #define IDS_PATH_LEN           64

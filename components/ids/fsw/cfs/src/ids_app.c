@@ -106,7 +106,7 @@ int32 IDS_AppInit(void)
     /* Debug: log working directory and file accessibility */
     {
         char cwd[128];
-        FILE *dbg = fopen("/cf/ids_debug.log", "w");
+        FILE *dbg = fopen("cf/ids_debug.log", "w");
         if (dbg)
         {
             if (getcwd(cwd, sizeof(cwd)) != NULL)
