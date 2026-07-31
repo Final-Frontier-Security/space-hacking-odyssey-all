@@ -103,31 +103,27 @@ int32 IDS_AppInit(void)
     IDS_LoadCanaryList();
     IDS_Baseline();
 
-    /* Debug: log working directory and file accessibility */
+    /* Log startup status to ids_log */
     {
+        char log_buf[128];
         char cwd[128];
-        FILE *dbg = fopen("cf/ids_debug.log", "w");
-        if (dbg)
+        if (getcwd(cwd, sizeof(cwd)) == NULL)
+            strncpy(cwd, "(unknown)", sizeof(cwd));
+
+        snprintf(log_buf, sizeof(log_buf), "INIT: CWD=%s, files=%d", cwd, (int)IDS_AppData.fileCount);
+        IDS_LogWrite(log_buf);
+
+        uint32 di;
+        for (di = 0; di < IDS_AppData.fileCount; di++)
         {
-            if (getcwd(cwd, sizeof(cwd)) != NULL)
-                fprintf(dbg, "CWD: %s\n", cwd);
-            else
-                fprintf(dbg, "CWD: (could not determine)\n");
-
-            fprintf(dbg, "Canary list path: %s\n", IDS_CANARY_LIST_PATH);
-            fprintf(dbg, "Files loaded: %d\n", (int)IDS_AppData.fileCount);
-
-            uint32 di;
-            for (di = 0; di < IDS_AppData.fileCount; di++)
-            {
-                struct stat dst;
-                int accessible = (stat(IDS_AppData.files[di].path, &dst) == 0);
-                fprintf(dbg, "  [%d] %s -> %s (crc=%08X)\n",
-                        (int)di, IDS_AppData.files[di].path,
-                        accessible ? "EXISTS" : "NOT FOUND",
-                        (unsigned)IDS_AppData.files[di].crc);
-            }
-            fclose(dbg);
+            struct stat dst;
+            int accessible = (stat(IDS_AppData.files[di].path, &dst) == 0);
+            snprintf(log_buf, sizeof(log_buf), "  [%d] %s -> %s mtime=%u crc=%08X",
+                     (int)di, IDS_AppData.files[di].path,
+                     accessible ? "OK" : "MISSING",
+                     (unsigned)IDS_AppData.files[di].mtime,
+                     (unsigned)IDS_AppData.files[di].crc);
+            IDS_LogWrite(log_buf);
         }
     }
 
@@ -238,6 +234,15 @@ void IDS_ScanFiles(void)
     struct stat st;
     uint32 current_crc;
     char log_buf[128];
+    static uint32 scan_count = 0;
+    scan_count++;
+
+    /* Log every 6th scan (~once per minute at 10s interval) */
+    if (scan_count % 6 == 1)
+    {
+        snprintf(log_buf, sizeof(log_buf), "SCAN #%u: checking %d files", (unsigned)scan_count, (int)IDS_AppData.fileCount);
+        IDS_LogWrite(log_buf);
+    }
 
     for (i = 0; i < IDS_AppData.fileCount; i++)
     {
