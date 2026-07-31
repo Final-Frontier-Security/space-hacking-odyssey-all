@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <sys/stat.h>
 #include <time.h>
+#include <unistd.h>
 
 IDS_AppData_t IDS_AppData;
 
@@ -101,6 +102,34 @@ int32 IDS_AppInit(void)
     /* Load canary file list and compute baselines */
     IDS_LoadCanaryList();
     IDS_Baseline();
+
+    /* Debug: log working directory and file accessibility */
+    {
+        char cwd[128];
+        FILE *dbg = fopen("/cf/ids_debug.log", "w");
+        if (dbg)
+        {
+            if (getcwd(cwd, sizeof(cwd)) != NULL)
+                fprintf(dbg, "CWD: %s\n", cwd);
+            else
+                fprintf(dbg, "CWD: (could not determine)\n");
+
+            fprintf(dbg, "Canary list path: %s\n", IDS_CANARY_LIST_PATH);
+            fprintf(dbg, "Files loaded: %d\n", (int)IDS_AppData.fileCount);
+
+            uint32 di;
+            for (di = 0; di < IDS_AppData.fileCount; di++)
+            {
+                struct stat dst;
+                int accessible = (stat(IDS_AppData.files[di].path, &dst) == 0);
+                fprintf(dbg, "  [%d] %s -> %s (crc=%08X)\n",
+                        (int)di, IDS_AppData.files[di].path,
+                        accessible ? "EXISTS" : "NOT FOUND",
+                        (unsigned)IDS_AppData.files[di].crc);
+            }
+            fclose(dbg);
+        }
+    }
 
     CFE_EVS_SendEvent(IDS_STARTUP_INF_EID, CFE_EVS_EventType_INFORMATION,
         "IDS: Initialized. Monitoring %d files, interval=%ds",
