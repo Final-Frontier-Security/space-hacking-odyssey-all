@@ -415,7 +415,7 @@ void IDS_ProcessGroundCommand(void)
         case IDS_SET_INTERVAL_CC:
         {
             IDS_SetIntervalCmd_t *cmd = (IDS_SetIntervalCmd_t *)IDS_AppData.MsgPtr;
-            if (cmd->interval >= 1 && cmd->interval <= 255)
+            if (cmd->interval >= 1)
             {
                 IDS_AppData.scanInterval = cmd->interval;
                 IDS_AppData.hk.scanInterval = cmd->interval;
