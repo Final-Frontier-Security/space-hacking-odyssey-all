@@ -170,7 +170,7 @@ int32 GENERIC_CSS_AppInit(void)
     ** Initialize application data
     ** Note that counters are excluded as they were reset in the previous code block
     */
-    GENERIC_CSS_AppData.HkTelemetryPkt.DeviceEnabled = GENERIC_CSS_DEVICE_ENABLED;
+    GENERIC_CSS_AppData.HkTelemetryPkt.DeviceEnabled = GENERIC_CSS_DEVICE_DISABLED;
 
     /*
      ** Send an information event that the app has initialized.

@@ -182,7 +182,7 @@ int32 GENERIC_STAR_TRACKER_AppInit(void)
     ** Initialize application data
     ** Note that counters are excluded as they were reset in the previous code block
     */
-    GENERIC_STAR_TRACKER_AppData.HkTelemetryPkt.DeviceEnabled          = GENERIC_STAR_TRACKER_DEVICE_ENABLED;
+    GENERIC_STAR_TRACKER_AppData.HkTelemetryPkt.DeviceEnabled          = GENERIC_STAR_TRACKER_DEVICE_DISABLED;
     GENERIC_STAR_TRACKER_AppData.HkTelemetryPkt.DeviceHK.DeviceCounter = 0;
 
     /*
