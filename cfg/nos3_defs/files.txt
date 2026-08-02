@@ -2,6 +2,6 @@
 # One file path per line. These files will be monitored for access and modification.
 # Lines starting with # are comments.
 # Paths are relative to cFS working directory (same level as cf/ and data/).
-data/credentials.txt
-data/mission_keys.txt
-data/flight_plan.txt
+data/encryption.key
+data/startracker.map
+data/gold.os

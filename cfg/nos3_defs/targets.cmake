@@ -163,7 +163,7 @@ SET(MISSION_CPUNAMES cpu1)
 # NASA Operational Simulator for Space Systems (NOS3) - Host Linux
 SET(cpu1_PROCESSORID 1)
 SET(cpu1_APPLIST) # Note: Using all ${MISSION_GLOBAL_APPLIST} automatically
-SET(cpu1_FILELIST cfe_es_startup.scr ips_allowlist.txt ids_canary.txt)
+SET(cpu1_FILELIST cfe_es_startup.scr ips_allowlist.txt files.txt)
 if (ENABLE_UNIT_TESTS)
     SET(cpu1_SYSTEM amd64-posix)
 else() 

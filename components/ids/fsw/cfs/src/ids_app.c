@@ -109,15 +109,42 @@ int32 IDS_AppInit(void)
                 FILE *cf = fopen(IDS_AppData.files[ci].path, "w");
                 if (cf)
                 {
-                    /* Write some plausible decoy content */
-                    if (strstr(IDS_AppData.files[ci].path, "credentials"))
-                        fprintf(cf, "admin:s3cr3t_p4ss\nroot:fl1ght_0ps!\n");
-                    else if (strstr(IDS_AppData.files[ci].path, "keys"))
-                        fprintf(cf, "AES256-KEY: 4D6F6F6E4C69676874657232303236\n");
-                    else if (strstr(IDS_AppData.files[ci].path, "flight_plan"))
-                        fprintf(cf, "ORBIT_ADJUST T+3600 DV=0.5m/s AZ=045\nDEORBIT T+86400\n");
+                    if (strstr(IDS_AppData.files[ci].path, "encryption.key"))
+                    {
+                        fprintf(cf, "# SATCOM Link Encryption Key - DO NOT MODIFY\n");
+                        fprintf(cf, "ALG: AES-256-GCM\n");
+                        fprintf(cf, "KEY: 7A4F2E8C1B9D5F3A6E0C4B8D2F7A1E9C3B5D8F0A2E6C4B9D1F3A7E5C8B0D2F\n");
+                        fprintf(cf, "IV:  A3F7C1E9B5D2804F\n");
+                        fprintf(cf, "EPOCH: 2026-001T00:00:00Z\n");
+                        fprintf(cf, "ROTATE: 2026-180T00:00:00Z\n");
+                    }
+                    else if (strstr(IDS_AppData.files[ci].path, "startracker.map"))
+                    {
+                        fprintf(cf, "# Star Tracker Calibration Map v3.2\n");
+                        fprintf(cf, "# Format: StarID RA(deg) DEC(deg) Magnitude Pixel_X Pixel_Y\n");
+                        fprintf(cf, "VEGA      279.2345  38.7837  0.03  512.4  384.1\n");
+                        fprintf(cf, "SIRIUS    101.2872 -16.7161 -1.46  128.9  601.3\n");
+                        fprintf(cf, "CANOPUS   095.9880 -52.6957 -0.74  256.7  712.8\n");
+                        fprintf(cf, "ARCTURUS  213.9153  19.1824 -0.05  640.2  298.5\n");
+                        fprintf(cf, "RIGEL     078.6345 -08.2016  0.13  384.1  544.9\n");
+                        fprintf(cf, "PROCYON   114.8274  05.2250  0.34  448.6  467.2\n");
+                        fprintf(cf, "BETELGEUS 088.7930  07.4071  0.50  401.3  451.8\n");
+                        fprintf(cf, "# Checksum: 0xA3F7\n");
+                    }
+                    else if (strstr(IDS_AppData.files[ci].path, "gold.os"))
+                    {
+                        fprintf(cf, "\x7F" "ELF");  /* ELF magic bytes */
+                        fprintf(cf, "# GOLD Master OS Image - Recovery Partition\n");
+                        fprintf(cf, "# Version: cFS 7.0.1-nos3 (baseline)\n");
+                        fprintf(cf, "# SHA256: e3b0c44298fc1c149afbf4c8996fb924\n");
+                        fprintf(cf, "#         27ae41e4649b934ca495991b7852b855\n");
+                        fprintf(cf, "# Built: 2026-01-15T08:30:00Z\n");
+                        fprintf(cf, "# DO NOT MODIFY - Used for safe-mode recovery\n");
+                    }
                     else
+                    {
                         fprintf(cf, "CANARY\n");
+                    }
                     fclose(cf);
                 }
             }
