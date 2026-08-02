@@ -171,7 +171,7 @@ int32 GENERIC_IMU_AppInit(void)
     ** Initialize application data
     ** Note that counters are excluded as they were reset in the previous code block
     */
-    GENERIC_IMU_AppData.HkTelemetryPkt.DeviceEnabled          = GENERIC_IMU_DEVICE_DISABLED;
+    GENERIC_IMU_AppData.HkTelemetryPkt.DeviceEnabled          = GENERIC_IMU_DEVICE_ENABLED;
     GENERIC_IMU_AppData.HkTelemetryPkt.DeviceHK.DeviceCounter = 0;
     GENERIC_IMU_AppData.HkTelemetryPkt.DeviceHK.DeviceStatus  = 0;
 

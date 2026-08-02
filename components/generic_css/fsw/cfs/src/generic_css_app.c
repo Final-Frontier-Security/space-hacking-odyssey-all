@@ -170,7 +170,7 @@ int32 GENERIC_CSS_AppInit(void)
     ** Initialize application data
     ** Note that counters are excluded as they were reset in the previous code block
     */
-    GENERIC_CSS_AppData.HkTelemetryPkt.DeviceEnabled = GENERIC_CSS_DEVICE_DISABLED;
+    GENERIC_CSS_AppData.HkTelemetryPkt.DeviceEnabled = GENERIC_CSS_DEVICE_ENABLED;
 
     /*
      ** Send an information event that the app has initialized.
@@ -476,7 +476,7 @@ void GENERIC_CSS_Disable(void)
         status = i2c_master_close(&GENERIC_CSS_AppData.Generic_cssI2c);
         if (status == OS_SUCCESS)
         {
-            GENERIC_CSS_AppData.HkTelemetryPkt.DeviceEnabled = GENERIC_CSS_DEVICE_DISABLED;
+            GENERIC_CSS_AppData.HkTelemetryPkt.DeviceEnabled = GENERIC_CSS_DEVICE_ENABLED;
 
             /* Increment device success counter */
             GENERIC_CSS_AppData.HkTelemetryPkt.DeviceCount++;

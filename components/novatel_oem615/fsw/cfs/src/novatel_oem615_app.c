@@ -177,7 +177,7 @@ int32 NOVATEL_OEM615_AppInit(void)
     ** Initialize application data
     ** Note that counters are excluded as they were reset in the previous code block
     */
-    NOVATEL_OEM615_AppData.HkTelemetryPkt.DeviceEnabled = NOVATEL_OEM615_DEVICE_DISABLED;
+    NOVATEL_OEM615_AppData.HkTelemetryPkt.DeviceEnabled = NOVATEL_OEM615_DEVICE_ENABLED;
 
     /* Create hk data mutex */
     status = OS_MutSemCreate(&NOVATEL_OEM615_AppData.HkDataMutex, NOVATEL_OEM615_HK_MUTEX_NAME, 0);

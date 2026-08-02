@@ -170,7 +170,7 @@ int32 GENERIC_MAG_AppInit(void)
     ** Initialize application data
     ** Note that counters are excluded as they were reset in the previous code block
     */
-    GENERIC_MAG_AppData.HkTelemetryPkt.DeviceEnabled = GENERIC_MAG_DEVICE_DISABLED;
+    GENERIC_MAG_AppData.HkTelemetryPkt.DeviceEnabled = GENERIC_MAG_DEVICE_ENABLED;
     GENERIC_MAG_AppData.Generic_magSpi.deviceString  = GENERIC_MAG_CFG_STRING;
     GENERIC_MAG_AppData.Generic_magSpi.handle        = GENERIC_MAG_CFG_HANDLE;
     GENERIC_MAG_AppData.Generic_magSpi.baudrate      = GENERIC_MAG_CFG_BAUD;

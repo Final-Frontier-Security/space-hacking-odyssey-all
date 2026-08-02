@@ -192,7 +192,7 @@ int32 SAMPLE_AppInit(void)
     ** Initialize application data
     ** Note that counters are excluded as they were reset in the previous code block
     */
-    SAMPLE_AppData.HkTelemetryPkt.DeviceEnabled          = SAMPLE_DEVICE_DISABLED;
+    SAMPLE_AppData.HkTelemetryPkt.DeviceEnabled          = SAMPLE_DEVICE_ENABLED;
     SAMPLE_AppData.HkTelemetryPkt.DeviceHK.DeviceCounter = 0;
     SAMPLE_AppData.HkTelemetryPkt.DeviceHK.DeviceConfig  = 0;
     SAMPLE_AppData.HkTelemetryPkt.DeviceHK.DeviceStatus  = 0;
