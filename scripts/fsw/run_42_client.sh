@@ -24,7 +24,7 @@ echo "Server: ${SAT_HOST}:${GFX_PORT}"
 xhost +local: 2>/dev/null || true
 
 # Remove stale container if exists
-docker rm -f nos3-42-opstation-gfx 2>/dev/null || true
+docker rm -f fortytwo 2>/dev/null || true
 
 # Check configs exist
 if [ ! -d "$INOUT_DIR" ]; then
@@ -57,7 +57,7 @@ docker run --rm \
     -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
     -v "$USER_NOS3_DIR:$USER_NOS3_DIR" \
     -w "$USER_NOS3_DIR/42" \
-    --name nos3-42-opstation-gfx \
+    --name fortytwo \
     -t "$DBOX" \
     "$USER_NOS3_DIR/42/42" NOS3InOutGfx
 
