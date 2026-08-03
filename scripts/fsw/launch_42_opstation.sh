@@ -48,6 +48,6 @@ docker run --rm \
     -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
     -v "$USER_NOS3_DIR:$USER_NOS3_DIR" \
     -w "$USER_NOS3_DIR/42" \
-    --name nos3-42-opstation-gfx \
+    --name fortytwo \
     -t "$DBOX" \
     "$USER_NOS3_DIR/42/42" NOS3InOutGfx
