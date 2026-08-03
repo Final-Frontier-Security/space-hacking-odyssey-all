@@ -6,6 +6,9 @@
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 source "$SCRIPT_DIR/../env.sh"
 
+# Enable strictatime for IDS file access detection
+mount -o remount,strictatime / 2>/dev/null || true
+
 D_AUTOSTART="${D_AUTOSTART:---restart unless-stopped}"
 DCALL_RUN="$DCALL run -dit"
 
