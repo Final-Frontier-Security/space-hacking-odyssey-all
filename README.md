@@ -1,27 +1,115 @@
-# NASA Operational Simulator for Space Systems (NOS3)
+# Space Hacking Odyssey
 
-NOS3 is a suite of tools developed by NASA's Katherine Johnson Independent Verification and Validation (IV&V) Facility to aid in areas such as software development, integration & test (I&T), mission operations/training, verification and validation (V&V), and software systems check-out. 
-NOS3 provides a software development environment, a multi-target build system, an operator interface/ground station, dynamics and environment simulations, and software-based models of spacecraft hardware.
+A cybersecurity training environment built on NASA's NOS3 (NASA Operational Simulator for Small Satellites). The environment simulates a satellite, ground station, and operator station deployed across AWS EC2 instances.
 
-# Documentation
+## Architecture
 
-[NOS3 - ReadTheDocs](https://nos3.readthedocs.io/en/latest/)
+| Component | IP Address | Instance Type | Purpose |
+|-----------|-----------|---------------|---------|
+| Satellite | 10.10.10.10 | c5.2xlarge | Runs cFS flight software, 42 simulator, and hardware sims |
+| Ground Station | 10.10.20.10 | c5.2xlarge | Runs OpenC3 COSMOS for command and telemetry |
+| Operator Station | 10.10.20.20 | c5.2xlarge | Student workstation with Holodeck UI and 42 viewer |
 
-## Issues and Feature Requests
+## Prerequisites
 
-Please report issues and request features on the GitHub tracking system - [NOS3 Issues](https://www.github.com/nasa/nos3/issues).
+- AWS account
+- AMIs built for each role (see Makefile targets below)
+- Docker installed on all instances
+- CloudFormation template deployed
 
-If you would like to contribute to the repository, please complete this [NASA Form][def] and submit it to gsfc-softwarerequest@mail.nasa.gov with Justin.R.Morris@nasa.gov CC'ed.
-Next, please create an issue describing the work to be performed noting that you intend to work it, create a related branch, and submit a pull request when ready. When complete, we will review and work to get it integrated.
+## Deployment
 
-If this project interests you or if you have any questions, please feel free to open an issue or discussion on the GitHub, contact any developer directly, or email `support@nos3.org`.
+### Satellite
 
-[def]: https://github.com/nasa/nos3/files/14578604/NOS3_Invd_CLA.pdf "NOS3 NASA Contributor Form PDF"
+```bash
+ssh ubuntu@<satellite-ip>
+cd /opt/space-hacking-odyssey-all
+git pull
+make deploy-sat
+```
 
-## License
+This runs: `prep` → `config` → `fsw` → `sim` → `build_cryptolib` → `start-sat-aws`
 
-This project is licensed under the NOSA 1.3 (NASA Open Source Agreement) License. 
+### Ground Station
 
-## Versioning
+```bash
+ssh ubuntu@<groundstation-ip>
+cd /opt/space-hacking-odyssey-all
+git pull
+make deploy-gsw
+```
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the tags on this repository.
+This runs: `config` → `gsw_build.sh` (OpenC3 plugin) → `setup_ftp` → `start-gsw-aws`
+
+To restart after code changes:
+```bash
+make stop
+make deploy-gsw
+```
+
+### Operator Station
+
+```bash
+ssh ubuntu@<opstation-ip>
+cd /opt/space-hacking-odyssey-all
+git pull
+make deploy-opstation
+```
+
+This runs: clones/builds 42 in Docker → `config` → `setup_42_opstation.sh` → `setup-holodeck.sh`
+
+## Stopping
+
+```bash
+make stop
+```
+
+## Key Directories
+
+| Path | Description |
+|------|-------------|
+| `components/` | cFS apps (ADCS, sensors, CFDP, IPS, IDS, backdoor, etc.) |
+| `cfg/nos3_defs/` | Flight software configuration (startup script, tables, allowlists) |
+| `scripts/` | Launch, setup, and utility scripts |
+| `opstation/` | Holodeck frontend/backend, desktop assets, tools |
+| `gsw/cosmos/` | OpenC3 ground software config and target definitions |
+| `fsw/` | cFE core, cFS apps (to_lab, ci_lab, etc.) |
+| `sims/` | Hardware simulators (connect to 42) |
+
+## Custom Components
+
+### IPS (Intrusion Prevention System)
+Monitors the ES app table for unauthorized applications. Starts unloaded — load with:
+```
+CFE_ES START_APP: Name=IPS, EntryPoint=IPS_AppMain, Filename=/cf/ips.so, StackSize=16384, Priority=77
+```
+
+### IDS (Intrusion Detection System)
+Monitors canary files in `data/` for access and modification. Starts unloaded — load with:
+```
+CFE_ES START_APP: Name=IDS, EntryPoint=IDS_AppMain, Filename=/cf/ids.so, StackSize=16384, Priority=78
+```
+
+Canary file list: `cfg/nos3_defs/files.txt`
+
+### CFDP (File Transfer)
+Custom file upload/download between ground and satellite. Microservice runs in OpenC3.
+
+### Backdoor
+Demonstration malicious app. Not compiled with the satellite — pre-built `.so` uploaded via CFDP during labs.
+
+## Telemetry Flow
+
+1. cFS apps publish telemetry to the software bus
+2. TO_LAB subscribes and sends UDP packets to ground station
+3. OpenC3 receives packets on configured interface ports
+4. Students view telemetry in OpenC3 web UI
+
+TO output must be enabled after boot:
+```
+TO_DEBUG ENABLE_OUTPUT with DEST_IP '<groundstation-ip>', DEST_PORT 5013
+```
+
+## Sensor Initialization
+
+All sensors start disabled. Enable them after boot.
