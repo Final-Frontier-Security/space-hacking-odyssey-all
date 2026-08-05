@@ -26,9 +26,13 @@ Total for all three instances: **~$0.52/hr** (as of August 2026, [source](https:
 - AWS account
 - AMIs built for each role (see Makefile targets below)
 - Docker installed on all instances
-- CloudFormation template deployed
 
-## AWS Environment Setup
+There are two deployment options:
+
+1. **Option 1 — AWS Environment Setup (CloudFormation):** Deploys the full environment automatically using a CloudFormation template. Best for quickly standing up the lab.
+2. **Option 2 — Manual Deployment:** SSH into pre-provisioned instances and run make targets yourself. Use this if you already have instances running or need more control.
+
+## Option 1 — AWS Environment Setup (CloudFormation)
 
 If you would like to spin up your own environment in AWS, you will need the following:
 
@@ -80,7 +84,7 @@ aws cloudformation delete-stack --stack-name space-class-stack
 aws cloudformation wait stack-delete-complete --stack-name space-class-stack
 ```
 
-## Deployment
+## Option 2 — Manual Deployment
 
 ### Satellite
 
